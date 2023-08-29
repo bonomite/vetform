@@ -36,9 +36,12 @@ const formData = reactive({
   phone: '',
 })
 
+const isSmsSent = ref(false)
+const verifyCode = ref(null)
+
 const v$ = useVuelidate(rules, formData)
 
-async function verify() {
+async function phoneAuth() {
   v$.value.$validate()
   //console.log(v$.value)
   if (!v$.value.$error) {
@@ -56,11 +59,22 @@ async function verify() {
       console.log('error', error)
       // message alert to user
     } else {
+      isSmsSent.value = true
       // if no error route to verify page
     }
   } else {
     //alert('not valid')
   }
+}
+
+async function verify() {
+  let { session, error } = await client.auth.verifyOtp({
+    phone: convertToE164(formData.phone),
+    token: verifyCode.value,
+    type: 'sms',
+  })
+  const user = await client.auth.getSession()
+  console.log(user)
 }
 </script>
 <template>
@@ -68,15 +82,24 @@ async function verify() {
   <h2>Let's sign in with your phone number</h2>
 
   <div class="flex flex-column">
-    <label for="phone">Phone</label>
-    <InputMask
-      v-model="formData.phone"
-      date="phone"
-      mask="(999) 999-9999"
-      placeholder="(999) 999-9999"
-    />
-    <error :errArr="v$.phone.$errors" />
+    <div v-if="!isSmsSent">
+      <label for="phone">Phone</label>
+      <InputMask
+        v-model="formData.phone"
+        date="phone"
+        mask="(999) 999-9999"
+        placeholder="(999) 999-9999"
+      />
+      <error :errArr="v$.phone.$errors" />
 
-    <Button label="Continue" @click="verify" />
+      <Button label="Continue" @click="phoneAuth" />
+    </div>
+    <div v-else>
+      <label for="phone"
+        >Enter your verification code sent to your phone number</label
+      >
+      <InputText v-model="verifyCode" />
+      <Button label="Verify" @click="verify" />
+    </div>
   </div>
 </template>
