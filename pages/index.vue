@@ -13,7 +13,12 @@
 
 	function triggerView() {
 		gtm.trackView('Home', '/')
-	}
+}
+
+const phone = ref('')
+function verify() {
+alert(phone.value)
+}	
 </script>
 <template>
 	<h1>Hello!</h1>
@@ -26,4 +31,13 @@
 	<!-- <Button label="Click Me" url="/login" /> -->
 	<hr />
 	<NuxtLink to="https://blender.org">Blender</NuxtLink>
+	<hr />
+	<div class="flex flex-column">
+    <label for="phone">Phone</label>
+    <InputMask v-model="phone" date="phone" mask="(999) 999-9999" placeholder="(999) 999-9999" />
+    <small id="username-help">Enter your username to reset your password.</small>
+
+	<Button label="Continue" @click="verify"/>
+
+</div>
 </template>
