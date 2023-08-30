@@ -81,8 +81,8 @@ async function verify() {
   <h1>Welcome to VCA Animal Hospital</h1>
   <h2>Let's sign in with your phone number</h2>
 
-  <div class="flex flex-column">
-    <div v-if="!isSmsSent">
+  <div v-if="!isSmsSent">
+    <div class="flex flex-column">
       <label for="phone">Phone</label>
       <InputMask
         v-model="formData.phone"
@@ -94,7 +94,9 @@ async function verify() {
 
       <Button label="Continue" @click="phoneAuth" />
     </div>
-    <div v-else>
+  </div>
+  <div v-else>
+    <div class="flex flex-column">
       <label for="phone"
         >Enter your verification code sent to your phone number</label
       >
