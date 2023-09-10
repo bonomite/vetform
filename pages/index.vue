@@ -2,6 +2,8 @@
 import { useVuelidate } from '@vuelidate/core'
 import { email, helpers, minLength, required } from '@vuelidate/validators'
 import { convertToE164 } from '~/utilities/helpers.js'
+import { useToast } from 'primevue/usetoast'
+const toast = useToast()
 //const gtm = useGtm()
 // function triggerEvent() {
 // 	gtm.trackEvent({
@@ -59,11 +61,23 @@ async function phoneAuth() {
       console.log('error', error)
       // message alert to user
     } else {
+      // if no error show the verify code input
       isSmsSent.value = true
-      // if no error route to verify page
+      toast.add({
+        severity: 'success',
+        summary: 'Authentication',
+        detail: `Verification code sent to ${formData.phone}`,
+        life: 3000,
+      })
     }
   } else {
     //alert('not valid')
+    toast.add({
+      severity: 'danger',
+      summary: 'Authentication failed',
+      detail: `Please enter a valid phone number and try again`,
+      life: 3000,
+    })
   }
 }
 
@@ -79,9 +93,8 @@ async function verify() {
 </script>
 <template>
   <h1>Welcome to VCA Animal Hospital</h1>
-  <h2>Let's sign in with your phone number</h2>
-
   <div v-if="!isSmsSent">
+    <h2>Let's sign in with your phone number</h2>
     <div class="flex flex-column">
       <label for="phone">Phone</label>
       <InputMask
@@ -102,6 +115,16 @@ async function verify() {
       >
       <InputText v-model="verifyCode" />
       <Button label="Verify" @click="verify" />
+      <Button link label="Resend Code" @click="phoneAuth" />
+      <Button
+        link
+        label="Use a different phone number"
+        @click="
+          () => {
+            isSmsSent = !isSmsSent
+          }
+        "
+      />
     </div>
   </div>
 </template>
