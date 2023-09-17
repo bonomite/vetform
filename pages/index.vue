@@ -3,25 +3,12 @@ import { useVuelidate } from '@vuelidate/core'
 import { email, helpers, minLength, required } from '@vuelidate/validators'
 import { convertToE164 } from '~/utilities/helpers.js'
 import { useToast } from 'primevue/usetoast'
-const toast = useToast()
-//const gtm = useGtm()
-// function triggerEvent() {
-// 	gtm.trackEvent({
-// 		event: 'login',
-// 		category: 'GTM Test',
-// 		action: 'click',
-// 		label: 'Login',
-// 		value: 5000,
-// 		noninteraction: false,
-// 	})
-// }
+import { useCurrentUser } from '~/composables/states.ts'
 
-// function triggerView() {
-// 	gtm.trackView('Home', '/')
-// }
+const currentUser = useCurrentUser()
+const toast = useToast()
 const client = useSupabaseClient()
 const phoneNumberRegEx = helpers.regex(/^\(\d{3}\) \d{3}-\d{4}$/)
-
 const rules = computed(() => {
   return {
     phone: {
@@ -33,14 +20,11 @@ const rules = computed(() => {
     },
   }
 })
-
 const formData = reactive({
   phone: '',
 })
-
 const isSmsSent = ref(false)
 const verifyCode = ref(null)
-
 const v$ = useVuelidate(rules, formData)
 
 async function phoneAuth() {
@@ -58,8 +42,14 @@ async function phoneAuth() {
     console.log('user', user)
 
     if (error) {
+      // Error with Supabase
       console.log('error', error)
-      // message alert to user
+      toast.add({
+        severity: 'danger',
+        summary: 'Database Error',
+        detail: `An error occured, please try again.`,
+        life: 3000,
+      })
     } else {
       // if no error show the verify code input
       isSmsSent.value = true
@@ -87,8 +77,25 @@ async function verify() {
     token: verifyCode.value,
     type: 'sms',
   })
-  const user = await client.auth.getSession()
-  console.log(user)
+  if (error) {
+    toast.add({
+      severity: 'danger',
+      summary: 'Verification failed',
+      detail: `Code verification failed. Please try again.`,
+      life: 3000,
+    })
+  } else {
+    currentUser.value = await client.auth.getSession()
+    if (currentUser.value.data.session.user.email) {
+      // Previously logged in
+      navigateTo('/dashboard')
+    } else {
+      navigateTo('/client-profile')
+      // New user
+    }
+    console.log(session)
+    console.log(currentUser)
+  }
 }
 </script>
 <template>
