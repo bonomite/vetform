@@ -2,8 +2,13 @@
 import { useVuelidate } from '@vuelidate/core'
 import { email, helpers, minLength, required } from '@vuelidate/validators'
 import { useToast } from 'primevue/usetoast'
-import { useCurrentUser } from '~/composables/states.ts'
+import { useCurrentUser, useCurrentUserProfile } from '~/composables/states.ts'
+definePageMeta({
+  middleware: 'get-profile',
+})
+
 const currentUser = useCurrentUser()
+const currentUserProfile = useCurrentUserProfile()
 const toast = useToast()
 const client = useSupabaseClient()
 
@@ -22,10 +27,12 @@ const rules = computed(() => {
   }
 })
 
+console.log('useCurrentUserProfile -----', currentUserProfile.value)
+
 const formData = reactive({
-  first_name: '',
-  last_name: '',
-  email: '',
+  first_name: currentUserProfile.value?.first_name ?? '',
+  last_name: currentUserProfile.value?.last_name ?? '',
+  email: currentUserProfile.value?.email ?? '',
 })
 
 const v$ = useVuelidate(rules, formData)
@@ -64,9 +71,19 @@ async function submit() {
     }
   }
 }
+
+watch(
+  () => currentUserProfile.value,
+  () => {
+    formData.first_name = currentUserProfile.value?.first_name ?? ''
+    formData.last_name = currentUserProfile.value?.last_name ?? ''
+    formData.email = currentUserProfile.value?.email ?? ''
+  }
+)
 </script>
 <template>
   <h1>Client Profile</h1>
+
   <form novalidate @submit.prevent="submit" class="flex flex-column gap-2">
     <div class="flex flex-column gap-2">
       <label for="first_name">First Name</label>
