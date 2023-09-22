@@ -1,5 +1,10 @@
 <script setup>
 import { useCurrentUser, useCurrentUserProfile } from '~/composables/states.ts'
+
+definePageMeta({
+  middleware: 'authorized',
+})
+
 const currentUser = useCurrentUser()
 const currentUserProfile = useCurrentUserProfile()
 const client = useSupabaseClient()
