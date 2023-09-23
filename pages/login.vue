@@ -108,6 +108,8 @@ async function verify() {
         date="phone"
         mask="(999) 999-9999"
         placeholder="(999) 999-9999"
+        @keydown="(e) => (e.key === 'Enter' ? phoneAuth() : null)"
+        autofocus
       />
       <error :errArr="v$.phone.$errors" />
 
@@ -119,7 +121,11 @@ async function verify() {
       <label for="phone"
         >Enter your verification code sent to your phone number</label
       >
-      <InputText v-model="verifyCode" autofocus />
+      <InputText
+        v-model="verifyCode"
+        autofocus
+        @keydown="(e) => (e.key === 'Enter' ? verify() : null)"
+      />
       <Button label="Verify" @click="verify" />
       <Button link label="Resend Code" @click="phoneAuth" />
       <Button
