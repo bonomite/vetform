@@ -45,6 +45,22 @@ const petTypes = ref([
   { type: 'Hedgehogs' },
   { type: 'Other' },
 ])
+const selectedSex = ref()
+const sexTypes = ref([
+  'Male',
+  'Female',
+])
+const selectedSpayedNeutered = ref()
+const spayedNeutered = ref([
+  'Yes',
+  'No',
+])
+const selectedChipTattoo = ref()
+const chipTattoo = ref([
+  'No',
+  'Microchipped',
+  'Tattooed',
+])
 
 const tempPetsCount = ref(0)
 const currentStep = ref(0)
@@ -89,10 +105,12 @@ const v$ = useVuelidate(rules, formData)
         New, tell us about your {{ tempPetsCount > 1 ? 'other' : '' }} pet...
       </h1>
 
-      <div class="grid my-gutter">
+      <div class="grid row-gap-4 my-gutter">
+
+        <!-- Pet Name -->
         <div class="col-12 sm:col-6">
           <div class="flex flex-column gap-2">
-            <label for="first_name">Pet name</label>
+            <label for="pet_name">Pet name</label>
             <InputText
               label="Pet Name"
               v-model="formData.pet_name"
@@ -103,9 +121,11 @@ const v$ = useVuelidate(rules, formData)
             <Error :errArr="v$.pet_name.$errors" />
           </div>
         </div>
+
+        <!-- Pet Type -->
         <div class="col-12 sm:col-6">
           <div class="flex flex-column gap-2">
-            <label for="first_name">Pet type</label>
+            <label for="pet_type">Pet type</label>
             <div class="card flex justify-content-center">
               <Dropdown
                 v-model="selectedPetType"
@@ -114,6 +134,55 @@ const v$ = useVuelidate(rules, formData)
                 placeholder="Select"
                 class="w-full"
               />
+            </div>
+            <Error :errArr="v$.pet_name.$errors" />
+          </div>
+        </div>
+
+        <!-- Sex -->
+        <div class="col-12 sm:col-6">
+          <div class="flex flex-column gap-2">
+            <label for="first_name">Sex</label>
+            <div class="card flex">
+              <SelectButton v-model="selectedSex" :options="sexTypes" aria-labelledby="basic" />
+            </div>
+            <Error :errArr="v$.pet_name.$errors" />
+          </div>
+        </div>
+
+        <!-- Spayed / Neutered -->
+        <div class="col-12 sm:col-6">
+          <div class="flex flex-column gap-2">
+            <label for="spayed_neutered">Spayed / neutered</label>
+            <div class="card flex">
+              <SelectButton label="spayed_neutered" v-model="selectedSpayedNeutered" :options="spayedNeutered" aria-labelledby="basic" />
+            </div>
+            <Error :errArr="v$.pet_name.$errors" />
+          </div>
+        </div>
+
+        <!-- Age -->
+        <div class="col-12 sm:col-6">
+          <div class="flex flex-column gap-2">
+            <label for="age">Age</label>
+            <div class="card flex gap-4 align-items-center">
+              <div>
+                <InputText placeholder="0" class="max-w-3rem" /> Yr
+              </div>
+              <div>
+                <InputText placeholder="0" class="max-w-3rem" /> Mo
+              </div>
+            </div>
+            <Error :errArr="v$.pet_name.$errors" />
+          </div>
+        </div>
+
+        <!-- Microchipped / tattooed -->
+        <div class="col-12 sm:col-6">
+          <div class="flex flex-column gap-2">
+            <label for="microchipped_tattooed">Microchipped / tattooed</label>
+            <div class="card flex">
+              <SelectButton label="microchipped_tattooed" v-model="selectedChipTattoo" :options="chipTattoo" aria-labelledby="basic" />
             </div>
             <Error :errArr="v$.pet_name.$errors" />
           </div>
