@@ -34,16 +34,16 @@ const steps = ref([
 
 const selectedPetType = ref()
 const petTypes = ref([
-  { name: 'Dog' },
-  { name: 'Cat' },
-  { name: 'Rabbit' },
-  { name: 'Bird' },
-  { name: 'Guinea pig' },
-  { name: 'Hamster' },
-  { name: 'Chinchillas' },
-  { name: 'Rat' },
-  { name: 'Hedgehogs' },
-  { name: 'Other' },
+  { type: 'Dog' },
+  { type: 'Cat' },
+  { type: 'Rabbit' },
+  { type: 'Bird' },
+  { type: 'Guinea pig' },
+  { type: 'Hamster' },
+  { type: 'Chinchillas' },
+  { type: 'Rat' },
+  { type: 'Hedgehogs' },
+  { type: 'Other' },
 ])
 
 const tempPetsCount = ref(0)
@@ -110,9 +110,9 @@ const v$ = useVuelidate(rules, formData)
               <Dropdown
                 v-model="selectedPetType"
                 :options="petTypes"
-                optionLabel="name"
+                optionLabel="type"
                 placeholder="Select"
-                class="w-full md:w-14rem"
+                class="w-full"
               />
             </div>
             <Error :errArr="v$.pet_name.$errors" />
@@ -127,7 +127,7 @@ const v$ = useVuelidate(rules, formData)
 $container-breakpoint-sm: 470px;
 
 .my-gutter [class*='col'] {
-  padding: 1rem;
+  //padding: 1rem;
 }
 .pet-profile {
   container-type: inline-size;
