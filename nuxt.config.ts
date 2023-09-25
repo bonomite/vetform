@@ -1,5 +1,9 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+	components: [
+		'~/components',
+		'~/components/questions'
+	],
 	devtools: { enabled: true },
 	css: ['@/assets/css/theme.css', 'primeflex/primeflex.css', 'primeicons/primeicons.css', '@/assets/css/main.scss'],
 	build: {

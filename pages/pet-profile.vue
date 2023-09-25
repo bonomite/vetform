@@ -3,64 +3,23 @@ import { useVuelidate } from '@vuelidate/core'
 import { email, helpers, minLength, required } from '@vuelidate/validators'
 import { useToast } from 'primevue/usetoast'
 import { useCurrentUser, useCurrentUserProfile } from '~/composables/states.ts'
+import {
+  petTypes,
+  petProfileSteps,
+  sexTypes,
+  yesNoTypes,
+  trackingTypes,
+} from '~/composables/globals.ts'
 
 const currentUser = useCurrentUser()
 const currentUserProfile = useCurrentUserProfile()
 const toast = useToast()
 const client = useSupabaseClient()
 
-const steps = ref([
-  {
-    index: 0,
-    label: 'Your Pet',
-    route: '/',
-  },
-  {
-    index: 1,
-    label: 'Lifestyle',
-    route: '/seat',
-  },
-  {
-    index: 2,
-    label: 'Rx/Preventatives',
-    route: '/payment',
-  },
-  {
-    index: 3,
-    label: 'Insurance',
-    route: '/confirmation',
-  },
-])
-
 const selectedPetType = ref()
-const petTypes = ref([
-  { type: 'Dog' },
-  { type: 'Cat' },
-  { type: 'Rabbit' },
-  { type: 'Bird' },
-  { type: 'Guinea pig' },
-  { type: 'Hamster' },
-  { type: 'Chinchillas' },
-  { type: 'Rat' },
-  { type: 'Hedgehogs' },
-  { type: 'Other' },
-])
 const selectedSex = ref()
-const sexTypes = ref([
-  'Male',
-  'Female',
-])
 const selectedSpayedNeutered = ref()
-const spayedNeutered = ref([
-  'Yes',
-  'No',
-])
-const selectedChipTattoo = ref()
-const chipTattoo = ref([
-  'No',
-  'Microchipped',
-  'Tattooed',
-])
+const selectedTracking = ref()
 
 const tempPetsCount = ref(0)
 const currentStep = ref(0)
@@ -79,7 +38,12 @@ const rules = computed(() => {
 })
 
 const formData = reactive({
-  pet_name: '',
+  name: null,
+  type: null,
+  sex: null,
+  spayed_neutered: null,
+  age: null,
+  tracking: null,
 })
 
 const v$ = useVuelidate(rules, formData)
@@ -89,7 +53,7 @@ const v$ = useVuelidate(rules, formData)
   <div class="pet-profile">
     <div class="header">
       <Steps
-        :model="steps"
+        :model="petProfileSteps"
         aria-label="Form Steps"
         :readonly="true"
         :pt="{
@@ -102,11 +66,10 @@ const v$ = useVuelidate(rules, formData)
     </div>
     <section class="question your-pet">
       <h1>
-        New, tell us about your {{ tempPetsCount > 1 ? 'other' : '' }} pet...
+        Now, tell us about your {{ tempPetsCount > 1 ? 'other' : '' }} pet...
       </h1>
 
       <div class="grid row-gap-4 my-gutter">
-
         <!-- Pet Name -->
         <div class="col-12 sm:col-6">
           <div class="flex flex-column gap-2">
@@ -117,6 +80,7 @@ const v$ = useVuelidate(rules, formData)
               :class="{
                 'p-invalid': v$.pet_name.$error && v$.pet_name.$invalid,
               }"
+              autofocus
             ></InputText>
             <Error :errArr="v$.pet_name.$errors" />
           </div>
@@ -128,7 +92,7 @@ const v$ = useVuelidate(rules, formData)
             <label for="pet_type">Pet type</label>
             <div class="card flex justify-content-center">
               <Dropdown
-                v-model="selectedPetType"
+                v-model="formData.type"
                 :options="petTypes"
                 optionLabel="type"
                 placeholder="Select"
@@ -139,12 +103,26 @@ const v$ = useVuelidate(rules, formData)
           </div>
         </div>
 
+        <!-- Sex Test -->
+        <!-- <div class="col-12 sm:col-6">
+          <SelectButtonQuestion
+            label="Sex"
+            :options="['Male', 'Female ']"
+            sbTable="pets"
+            sbColumn="sex"
+          />
+        </div> -->
+
         <!-- Sex -->
         <div class="col-12 sm:col-6">
           <div class="flex flex-column gap-2">
             <label for="first_name">Sex</label>
             <div class="card flex">
-              <SelectButton v-model="selectedSex" :options="sexTypes" aria-labelledby="basic" />
+              <SelectButton
+                v-model="formData.sex"
+                :options="sexTypes"
+                aria-labelledby="basic"
+              />
             </div>
             <Error :errArr="v$.pet_name.$errors" />
           </div>
@@ -155,7 +133,12 @@ const v$ = useVuelidate(rules, formData)
           <div class="flex flex-column gap-2">
             <label for="spayed_neutered">Spayed / neutered</label>
             <div class="card flex">
-              <SelectButton label="spayed_neutered" v-model="selectedSpayedNeutered" :options="spayedNeutered" aria-labelledby="basic" />
+              <SelectButton
+                label="spayed_neutered"
+                v-model="formData.spayed_neutered"
+                :options="yesNoTypes"
+                aria-labelledby="basic"
+              />
             </div>
             <Error :errArr="v$.pet_name.$errors" />
           </div>
@@ -166,12 +149,8 @@ const v$ = useVuelidate(rules, formData)
           <div class="flex flex-column gap-2">
             <label for="age">Age</label>
             <div class="card flex gap-4 align-items-center">
-              <div>
-                <InputText placeholder="0" class="max-w-3rem" /> Yr
-              </div>
-              <div>
-                <InputText placeholder="0" class="max-w-3rem" /> Mo
-              </div>
+              <div><InputText placeholder="0" class="max-w-3rem" /> Yr</div>
+              <div><InputText placeholder="0" class="max-w-3rem" /> Mo</div>
             </div>
             <Error :errArr="v$.pet_name.$errors" />
           </div>
@@ -182,7 +161,13 @@ const v$ = useVuelidate(rules, formData)
           <div class="flex flex-column gap-2">
             <label for="microchipped_tattooed">Microchipped / tattooed</label>
             <div class="card flex">
-              <SelectButton label="microchipped_tattooed" v-model="selectedChipTattoo" :options="chipTattoo" aria-labelledby="basic" />
+              <SelectButton
+                label="microchipped_tattooed"
+                v-model="formData.tracking"
+                :options="trackingTypes"
+                aria-labelledby="basic"
+                multiple
+              />
             </div>
             <Error :errArr="v$.pet_name.$errors" />
           </div>
