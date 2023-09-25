@@ -38,7 +38,7 @@ const rules = computed(() => {
     spayed_neutered: {
       required: helpers.withMessage('Answer is required', required),
     },
-    age: {
+    dob: {
       required: helpers.withMessage('Pet age is required', required),
     },
   }
@@ -49,11 +49,23 @@ const formData = reactive({
   type: null,
   sex: null,
   spayed_neutered: null,
-  age: null,
+  dob: null,
   tracking: null,
 })
 
 const v$ = useVuelidate(rules, formData)
+
+const submit = async () => {
+  v$.value.$validate()
+  if (!v$.value.$error) {
+    // No validation error, navigate to next step
+
+    // update global state for pet profile
+    // update browser local storage for pet profile
+
+    navigateTo(petProfileSteps[1].route)
+  }
+}
 </script>
 
 <template>
@@ -76,42 +88,43 @@ const v$ = useVuelidate(rules, formData)
         Now, tell us about your {{ tempPetsCount > 1 ? 'other' : '' }} pet...
       </h1>
 
-      <div class="grid row-gap-4 my-gutter">
-        <!-- Pet Name -->
-        <div class="col-12 sm:col-6">
-          <div class="flex flex-column gap-2">
-            <label for="pet_name">Pet name</label>
-            <InputText
-              label="Pet Name"
-              v-model="formData.name"
-              :class="{
-                'p-invalid': v$.name.$error && v$.name.$invalid,
-              }"
-              autofocus
-            ></InputText>
-            <Error :errArr="v$.name.$errors" />
-          </div>
-        </div>
-
-        <!-- Pet Type -->
-        <div class="col-12 sm:col-6">
-          <div class="flex flex-column gap-2">
-            <label for="pet_type">Pet type</label>
-            <div class="card flex justify-content-center">
-              <Dropdown
-                v-model="formData.type"
-                :options="petTypes"
-                optionLabel="type"
-                placeholder="Select"
-                class="w-full"
-              />
+      <form novalidate @submit.prevent="submit">
+        <div class="grid row-gap-4 my-gutter">
+          <!-- Pet Name -->
+          <div class="col-12 sm:col-6">
+            <div class="flex flex-column gap-2">
+              <label for="pet_name">Pet name</label>
+              <InputText
+                label="Pet Name"
+                v-model="formData.name"
+                :class="{
+                  'p-invalid': v$.name.$error && v$.name.$invalid,
+                }"
+                autofocus
+              ></InputText>
+              <Error :errArr="v$.name.$errors" />
             </div>
-            <Error :errArr="v$.type.$errors" />
           </div>
-        </div>
 
-        <!-- Sex Test -->
-        <!-- <div class="col-12 sm:col-6">
+          <!-- Pet Type -->
+          <div class="col-12 sm:col-6">
+            <div class="flex flex-column gap-2">
+              <label for="pet_type">Pet type</label>
+              <div class="card flex justify-content-center">
+                <Dropdown
+                  v-model="formData.type"
+                  :options="petTypes"
+                  optionLabel="type"
+                  placeholder="Select"
+                  class="w-full"
+                />
+              </div>
+              <Error :errArr="v$.type.$errors" />
+            </div>
+          </div>
+
+          <!-- Sex Test -->
+          <!-- <div class="col-12 sm:col-6">
           <SelectButtonQuestion
             label="Sex"
             :options="['Male', 'Female ']"
@@ -120,66 +133,67 @@ const v$ = useVuelidate(rules, formData)
           />
         </div> -->
 
-        <!-- Sex -->
-        <div class="col-12 sm:col-6">
-          <div class="flex flex-column gap-2">
-            <label for="first_name">Sex</label>
-            <div class="card flex">
-              <SelectButton
-                v-model="formData.sex"
-                :options="sexTypes"
-                aria-labelledby="basic"
-              />
+          <!-- Sex -->
+          <div class="col-12 sm:col-6">
+            <div class="flex flex-column gap-2">
+              <label for="first_name">Sex</label>
+              <div class="card flex">
+                <SelectButton
+                  v-model="formData.sex"
+                  :options="sexTypes"
+                  aria-labelledby="basic"
+                />
+              </div>
+              <Error :errArr="v$.sex.$errors" />
             </div>
-            <Error :errArr="v$.sex.$errors" />
           </div>
-        </div>
 
-        <!-- Spayed / Neutered -->
-        <div class="col-12 sm:col-6">
-          <div class="flex flex-column gap-2">
-            <label for="spayed_neutered">Spayed / neutered</label>
-            <div class="card flex">
-              <SelectButton
-                label="spayed_neutered"
-                v-model="formData.spayed_neutered"
-                :options="yesNoTypes"
-                aria-labelledby="basic"
-              />
+          <!-- Spayed / Neutered -->
+          <div class="col-12 sm:col-6">
+            <div class="flex flex-column gap-2">
+              <label for="spayed_neutered">Spayed / neutered</label>
+              <div class="card flex">
+                <SelectButton
+                  label="spayed_neutered"
+                  v-model="formData.spayed_neutered"
+                  :options="yesNoTypes"
+                  aria-labelledby="basic"
+                />
+              </div>
+              <Error :errArr="v$.spayed_neutered.$errors" />
             </div>
-            <Error :errArr="v$.spayed_neutered.$errors" />
           </div>
-        </div>
 
-        <!-- Age -->
-        <div class="col-12 sm:col-6">
-          <div class="flex flex-column gap-2">
-            <label for="age">Age</label>
-            <div class="card flex gap-4 align-items-center">
-              <div><InputText placeholder="0" class="max-w-3rem" /> Yr</div>
-              <div><InputText placeholder="0" class="max-w-3rem" /> Mo</div>
+          <!-- Age -->
+          <div class="col-12 sm:col-6">
+            <div class="flex flex-column gap-2">
+              <label for="age">Date of birth</label>
+              <div class="card flex gap-4 align-items-center">
+                <Calendar v-model="formData.dob" showIcon />
+              </div>
+              <Error :errArr="v$.dob.$errors" />
             </div>
-            <Error :errArr="v$.age.$errors" />
           </div>
-        </div>
 
-        <!-- Microchipped / tattooed -->
-        <div class="col-12 sm:col-6">
-          <div class="flex flex-column gap-2">
-            <label for="microchipped_tattooed">Microchipped / tattooed</label>
-            <div class="card flex">
-              <SelectButton
-                label="microchipped_tattooed"
-                v-model="formData.tracking"
-                :options="trackingTypes"
-                aria-labelledby="basic"
-                multiple
-              />
+          <!-- Microchipped / tattooed -->
+          <div class="col-12 sm:col-6">
+            <div class="flex flex-column gap-2">
+              <label for="microchipped_tattooed">Microchipped / tattooed</label>
+              <div class="card flex">
+                <SelectButton
+                  label="microchipped_tattooed"
+                  v-model="formData.tracking"
+                  :options="trackingTypes"
+                  aria-labelledby="basic"
+                  multiple
+                />
+              </div>
+              <!-- <Error :errArr="v$.tracking.$errors" /> -->
             </div>
-            <!-- <Error :errArr="v$.tracking.$errors" /> -->
           </div>
+          <Button type="submit" label="Continue" />
         </div>
-      </div>
+      </form>
     </section>
   </div>
 </template>
