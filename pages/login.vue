@@ -1,22 +1,14 @@
 <script setup>
 import { useVuelidate } from '@vuelidate/core'
-import { helpers, required } from '@vuelidate/validators'
-import { convertToE164 } from '~/utilities/helpers.js'
 import { useToast } from 'primevue/usetoast'
 import { useCurrentUser } from '~/composables/states.ts'
-const currentUser = useCurrentUser()
+
 const toast = useToast()
+const currentUser = useCurrentUser()
 const client = useSupabaseClient()
-const phoneNumberRegEx = helpers.regex(/^\(\d{3}\) \d{3}-\d{4}$/)
 const rules = computed(() => {
   return {
-    phone: {
-      required: helpers.withMessage(
-        'The phone number field is required',
-        required
-      ),
-      phoneNumberRegEx,
-    },
+    phone: validatePhone(),
   }
 })
 const formData = reactive({
@@ -28,14 +20,9 @@ const v$ = useVuelidate(rules, formData)
 
 async function phoneAuth() {
   v$.value.$validate()
-  //console.log(v$.value)
   if (!v$.value.$error) {
-    //alert('valid')
-    // GTM event here
-    // supabase auth check here
-    console.log('convertToE164(formData.phone)', convertToE164(formData.phone))
     let { user, error } = await client.auth.signInWithOtp({
-      phone: convertToE164(formData.phone),
+      phone: convertPhoneToE164(formData.phone),
     })
 
     console.log('user', user)
@@ -43,46 +30,25 @@ async function phoneAuth() {
     if (error) {
       // Error with Supabase
       console.log('error', error)
-      toast.add({
-        severity: 'danger',
-        summary: 'Database Error',
-        detail: `An error occured, please try again.`,
-        life: 3000,
-      })
+      toast.add(toastMessage('database_error'))
     } else {
       // if no error show the verify code input
       isSmsSent.value = true
-      toast.add({
-        severity: 'success',
-        summary: 'Authentication',
-        detail: `Verification code sent to ${formData.phone}`,
-        life: 3000,
-      })
+      toast.add(toastMessage('sms_code_sent', formData.phone))
     }
   } else {
-    //alert('not valid')
-    toast.add({
-      severity: 'danger',
-      summary: 'Authentication failed',
-      detail: `Please enter a valid phone number and try again`,
-      life: 3000,
-    })
+    toast.add(toastMessage('phone_auth_failed'))
   }
 }
 
 async function verify() {
   let { session, error } = await client.auth.verifyOtp({
-    phone: convertToE164(formData.phone),
+    phone: convertPhoneToE164(formData.phone),
     token: verifyCode.value,
     type: 'sms',
   })
   if (error) {
-    toast.add({
-      severity: 'danger',
-      summary: 'Verification failed',
-      detail: `Code verification failed. Please try again.`,
-      life: 3000,
-    })
+    toast.add(toastMessage('sms_code_failed'))
   } else {
     currentUser.value = await client.auth.getSession()
     if (currentUser.value.data.session.user.email) {

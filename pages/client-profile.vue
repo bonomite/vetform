@@ -1,6 +1,5 @@
 <script setup>
 import { useVuelidate } from '@vuelidate/core'
-import { email, helpers, minLength, required } from '@vuelidate/validators'
 import { useToast } from 'primevue/usetoast'
 import { useCurrentUser, useCurrentUserProfile } from '~/composables/states.ts'
 definePageMeta({
@@ -14,20 +13,11 @@ const client = useSupabaseClient()
 
 const rules = computed(() => {
   return {
-    first_name: {
-      required: helpers.withMessage('First name is required', required),
-    },
-    last_name: {
-      required: helpers.withMessage('Last name is required', required),
-    },
-    email: {
-      email: helpers.withMessage('Invalid email format', email),
-      required: helpers.withMessage('The email field is required', required),
-    },
+    first_name: validateRequired('First name is required'),
+    last_name: validateRequired('Last name is required'),
+    email: validateEmail(),
   }
 })
-
-console.log('useCurrentUserProfile -----', currentUserProfile.value)
 
 const formData = reactive({
   first_name: currentUserProfile.value?.first_name ?? '',
@@ -54,19 +44,9 @@ async function submit() {
       .eq('id', currentUser.value.data.session.user.id)
     //   If Supabase errors
     if (error) {
-      toast.add({
-        severity: 'danger',
-        summary: 'Database error',
-        detail: `An error occured, please try again.`,
-        life: 3000,
-      })
+      toast.add(toastMessage('database_error'))
     } else {
-      toast.add({
-        severity: 'success',
-        summary: 'Profile saved',
-        detail: `Your profile information has been saved.`,
-        life: 3000,
-      })
+      toast.add(toastMessage('profile_saved'))
       navigateTo('/pet-profile')
     }
   }
