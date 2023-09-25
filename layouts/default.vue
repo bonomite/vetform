@@ -1,0 +1,4 @@
+<template>
+  vasdfva
+  <slot />
+</template>

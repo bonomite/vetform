@@ -11,13 +11,15 @@ import {
   trackingTypes,
 } from '~/composables/globals.ts'
 
+definePageMeta({
+  layout: 'pet',
+})
 const currentUser = useCurrentUser()
 const currentUserProfile = useCurrentUserProfile()
 const toast = useToast()
 const client = useSupabaseClient()
 
 const tempPetsCount = ref(0)
-const currentStep = ref(0)
 
 const isActive = (item) => {
   console.log('item   ', item)
@@ -70,19 +72,6 @@ const submit = async () => {
 
 <template>
   <div class="pet-profile">
-    <div class="header">
-      <Steps
-        :model="petProfileSteps"
-        aria-label="Form Steps"
-        :readonly="true"
-        :pt="{
-          menuitem: ({ context }) => ({
-            class: isActive(context.item) && 'p-highlight p-steps-current',
-          }),
-        }"
-      >
-      </Steps>
-    </div>
     <section class="question your-pet">
       <h1>
         Now, tell us about your {{ tempPetsCount > 1 ? 'other' : '' }} pet...
@@ -199,25 +188,10 @@ const submit = async () => {
 </template>
 
 <style lang="scss" scoped>
-$container-breakpoint-sm: 470px;
-
 .my-gutter [class*='col'] {
   //padding: 1rem;
 }
 .pet-profile {
   container-type: inline-size;
-
-  .header {
-    position: sticky;
-    top: 10px;
-    left: 0;
-    right: 0;
-    width: 100%;
-    .p-steps {
-      @container (max-width: #{$container-breakpoint-sm}) {
-        font-size: 0.75rem;
-      }
-    }
-  }
 }
 </style>
