@@ -13,7 +13,7 @@ export const petTypes: Array<{}> = [
 
 export const sexTypes: Array<{}> = ['Male', 'Female']
 export const yesNoTypes: Array<{}> = ['Yes', 'No']
-
+export const trackingTypes = ['Microchipped', 'Tattooed']
 export const petProfileSteps = [
     {
         index: 0,
@@ -37,4 +37,3 @@ export const petProfileSteps = [
     },
 ]
 
-export const trackingTypes = ['Microchipped', 'Tattooed']

@@ -16,11 +16,6 @@ const currentUserProfile = useCurrentUserProfile()
 const toast = useToast()
 const client = useSupabaseClient()
 
-const selectedPetType = ref()
-const selectedSex = ref()
-const selectedSpayedNeutered = ref()
-const selectedTracking = ref()
-
 const tempPetsCount = ref(0)
 const currentStep = ref(0)
 
@@ -31,8 +26,20 @@ const isActive = (item) => {
 
 const rules = computed(() => {
   return {
-    pet_name: {
-      required: helpers.withMessage('First name is required', required),
+    name: {
+      required: helpers.withMessage('Pet name is required', required),
+    },
+    type: {
+      required: helpers.withMessage('Pet type is required', required),
+    },
+    sex: {
+      required: helpers.withMessage('Pet sex is required', required),
+    },
+    spayed_neutered: {
+      required: helpers.withMessage('Answer is required', required),
+    },
+    age: {
+      required: helpers.withMessage('Pet age is required', required),
     },
   }
 })
@@ -76,13 +83,13 @@ const v$ = useVuelidate(rules, formData)
             <label for="pet_name">Pet name</label>
             <InputText
               label="Pet Name"
-              v-model="formData.pet_name"
+              v-model="formData.name"
               :class="{
-                'p-invalid': v$.pet_name.$error && v$.pet_name.$invalid,
+                'p-invalid': v$.name.$error && v$.name.$invalid,
               }"
               autofocus
             ></InputText>
-            <Error :errArr="v$.pet_name.$errors" />
+            <Error :errArr="v$.name.$errors" />
           </div>
         </div>
 
@@ -99,7 +106,7 @@ const v$ = useVuelidate(rules, formData)
                 class="w-full"
               />
             </div>
-            <Error :errArr="v$.pet_name.$errors" />
+            <Error :errArr="v$.type.$errors" />
           </div>
         </div>
 
@@ -124,7 +131,7 @@ const v$ = useVuelidate(rules, formData)
                 aria-labelledby="basic"
               />
             </div>
-            <Error :errArr="v$.pet_name.$errors" />
+            <Error :errArr="v$.sex.$errors" />
           </div>
         </div>
 
@@ -140,7 +147,7 @@ const v$ = useVuelidate(rules, formData)
                 aria-labelledby="basic"
               />
             </div>
-            <Error :errArr="v$.pet_name.$errors" />
+            <Error :errArr="v$.spayed_neutered.$errors" />
           </div>
         </div>
 
@@ -152,7 +159,7 @@ const v$ = useVuelidate(rules, formData)
               <div><InputText placeholder="0" class="max-w-3rem" /> Yr</div>
               <div><InputText placeholder="0" class="max-w-3rem" /> Mo</div>
             </div>
-            <Error :errArr="v$.pet_name.$errors" />
+            <Error :errArr="v$.age.$errors" />
           </div>
         </div>
 
@@ -169,7 +176,7 @@ const v$ = useVuelidate(rules, formData)
                 multiple
               />
             </div>
-            <Error :errArr="v$.pet_name.$errors" />
+            <!-- <Error :errArr="v$.tracking.$errors" /> -->
           </div>
         </div>
       </div>
