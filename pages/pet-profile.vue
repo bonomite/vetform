@@ -2,7 +2,13 @@
 import { useVuelidate } from '@vuelidate/core'
 import { email, helpers, minLength, required } from '@vuelidate/validators'
 import { useToast } from 'primevue/usetoast'
-import { useCurrentUser, useCurrentUserProfile } from '~/composables/states.ts'
+import { savePetFormData } from 'utils/dataManagement'
+import {
+  useCurrentUser,
+  useCurrentUserProfile,
+  useCurrentPetProfileStep,
+  usePetProfileData,
+} from '~/composables/states.ts'
 import {
   petTypes,
   petProfileSteps,
@@ -14,6 +20,9 @@ import {
 definePageMeta({
   layout: 'pet',
 })
+
+const currentPetProfileStep = useCurrentPetProfileStep()
+const petProfileData = usePetProfileData()
 const currentUser = useCurrentUser()
 const currentUserProfile = useCurrentUserProfile()
 const toast = useToast()
@@ -21,10 +30,9 @@ const client = useSupabaseClient()
 
 const tempPetsCount = ref(0)
 
-const isActive = (item) => {
-  console.log('item   ', item)
-  return item.index === currentStep.value ? true : false
-}
+onBeforeMount(async () => {
+  currentPetProfileStep.value = 0
+})
 
 const rules = computed(() => {
   return {
@@ -64,7 +72,9 @@ const submit = async () => {
 
     // update global state for pet profile
     // update browser local storage for pet profile
+    savePetFormData(formData)
 
+    // navigate to next step
     navigateTo(petProfileSteps[1].route)
   }
 }

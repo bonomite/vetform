@@ -2,6 +2,7 @@
 import { useVuelidate } from '@vuelidate/core'
 import { useToast } from 'primevue/usetoast'
 import { useCurrentUser, useCurrentUserProfile } from '~/composables/states.ts'
+
 definePageMeta({
   middleware: 'get-profile',
 })

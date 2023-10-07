@@ -11,6 +11,21 @@ export const petTypes: Array<{}> = [
     { type: 'Other' },
 ];
 
+export const lifestyles: Array<{}> = [
+    { label: 'Boarding' },
+    { label: 'Grooming' },
+    { label: 'Daycare' },
+    { label: 'Dog Park' },
+    { label: 'Hiking' },
+    { label: 'Hunting' },
+    { label: 'Travel' },
+    { label: 'Backyard' },
+    { label: 'Neighborhoos walks' },
+    { label: 'Doggy play dates' },
+    { label: 'Other' },
+];
+
+
 export const sexTypes: Array<{}> = ['Male', 'Female']
 export const yesNoTypes: Array<{}> = ['Yes', 'No']
 export const trackingTypes = ['Microchipped', 'Tattooed']

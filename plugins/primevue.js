@@ -2,6 +2,7 @@ import { defineNuxtPlugin } from '#app'
 import PrimeVue from 'primevue/config'
 import Button from 'primevue/button'
 import Calendar from 'primevue/calendar'
+import Checkbox from 'primevue/checkbox'
 import Dropdown from 'primevue/dropdown'
 import InputText from 'primevue/inputtext'
 import InputMask from 'primevue/inputmask'
@@ -15,6 +16,7 @@ export default defineNuxtPlugin((nuxtApp) => {
 	nuxtApp.vueApp.use(ToastService)
 	nuxtApp.vueApp.component('Button', Button)
 	nuxtApp.vueApp.component('Calendar', Calendar)
+	nuxtApp.vueApp.component('Checkbox', Checkbox)
 	nuxtApp.vueApp.component('Dropdown', Dropdown)
 	nuxtApp.vueApp.component('InputText', InputText)
 	nuxtApp.vueApp.component('InputMask', InputMask)

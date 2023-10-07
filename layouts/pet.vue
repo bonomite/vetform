@@ -1,8 +1,11 @@
 <script setup>
-const currentStep = ref(0)
+import { petProfileSteps } from '~/composables/globals.ts'
+import { useCurrentPetProfileStep } from '~/composables/states.ts'
+const currentPetProfileStep = useCurrentPetProfileStep()
+//const currentStep = ref(0)
 const isActive = (item) => {
   console.log('item   ', item)
-  return item.index === currentStep.value ? true : false
+  return item.index === currentPetProfileStep.value ? true : false
 }
 </script>
 
