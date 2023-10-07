@@ -18,11 +18,11 @@ const selectedKLifestyles = ref([])
       <h1>Your pet’s lifestyle</h1>
 
       <div class="card flex justify-content-center">
-        <div class="flex flex-column gap-3">
+        <div class="grid">
           <div
             v-for="lifestyle of lifestyles"
             :key="lifestyle.key"
-            class="flex align-items-center"
+            class="flex align-items-center col-6"
           >
             <Checkbox
               v-model="selectedKLifestyles"
