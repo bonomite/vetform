@@ -1,6 +1,15 @@
 <script setup>
 import { useCurrentPetProfileStep } from '~/composables/states.ts'
-import { lifestyles } from '~/composables/globals.ts'
+import {
+  lifestyles,
+  yesNoOptions,
+  petAquiredFromOptions,
+} from '~/composables/globals.ts'
+import { useVuelidate } from '@vuelidate/core'
+import { email, helpers, minLength, required } from '@vuelidate/validators'
+//import { useToast } from 'primevue/usetoast'
+import { savePetFormData } from '~/utils/dataManagement'
+
 const currentPetProfileStep = useCurrentPetProfileStep()
 definePageMeta({
   layout: 'pet',
@@ -10,32 +19,157 @@ onBeforeMount(async () => {
   currentPetProfileStep.value = 1
 })
 
-const selectedKLifestyles = ref([])
+const lastLifestyle = (index) => {
+  if (index === lifestyles.length - 1) {
+    return true
+  }
+  return false
+}
+const formData = reactive({
+  lifestyles: null,
+  lifestyles_other: null,
+  household_less_than_6_months: null,
+  pet_aquired_from: null,
+  describe_housing: null,
+})
+
+const rules = computed(() => {
+  return {
+    household_less_than_6_months: {
+      required: helpers.withMessage('Answer is required', required),
+    },
+    pet_aquired_from: {
+      required: helpers.withMessage('Answer is required', required),
+    },
+    describe_housing: {
+      required: helpers.withMessage('Answer is required', required),
+    },
+  }
+})
+
+const v$ = useVuelidate(rules, formData)
+
+const submit = async () => {
+  v$.value.$validate()
+  if (!v$.value.$error) {
+    // No validation error, navigate to next step
+
+    // update global state for pet profile
+    // update browser local storage for pet profile
+    savePetFormData(formData)
+
+    // navigate to next step
+    navigateTo(petProfileSteps[2].route)
+  }
+}
 </script>
 <template>
   <div class="pet-profile">
     <section class="question your-pet">
-      <h1>Your pet’s lifestyle</h1>
+      <h1>Your pet's lifestyle</h1>
 
-      <div class="card flex justify-content-center">
-        <div class="grid">
+      <form novalidate @submit.prevent="submit">
+        <div class="grid row-gap-4 my-gutter">
+          <label class="question-text col-12">Select all that apply:</label>
+          <div class="grid col-12">
+            <div
+              v-for="(lifestyle, index) of lifestyles"
+              :key="lifestyle.key"
+              class="col-6 md:col-4 mb-2"
+              :class="[{ 'col-12 sm:col-6': lastLifestyle(index) }]"
+            >
+              <div class="flex flex-column">
+                <div class="flex align-items-center">
+                  <Checkbox
+                    v-model="formData.lifestyles"
+                    :inputId="lifestyle.key"
+                    name="lifestyle"
+                    :value="lifestyle.label"
+                  />
+                  <label :for="lifestyle.key" class="ml-2 line-height-2"
+                    >{{ lifestyle.label }}
+                  </label>
+                </div>
+                <InputText
+                  v-if="
+                    lastLifestyle(index) &&
+                    formData.lifestyles?.includes('Other')
+                  "
+                  v-model="formData.lifestyles_other"
+                  type="text"
+                  placeholder="Other lifestyle"
+                  class="mt-2 w-full"
+                />
+              </div>
+            </div>
+            <!-- household <6 months -->
+          </div>
+          <div class="col-12 sm:col-6">
+            <div class="flex flex-column gap-2">
+              <label class="question-text"
+                >Has PETNAME been in your household less than 6 months?</label
+              >
+              <div class="card flex">
+                <SelectButton
+                  label="spayed_neutered"
+                  v-model="formData.household_less_than_6_months"
+                  :options="yesNoOptions"
+                  aria-labelledby="basic"
+                  @click="console.log(formData.household_less_than_6_months)"
+                />
+              </div>
+              <Error :errArr="v$.household_less_than_6_months.$errors" />
+            </div>
+          </div>
+
+          <!-- Aquired -->
           <div
-            v-for="lifestyle of lifestyles"
-            :key="lifestyle.key"
-            class="flex align-items-center col-6"
+            class="col-12 sm:col-6"
+            v-if="formData.household_less_than_6_months === 'Yes'"
           >
-            <Checkbox
-              v-model="selectedKLifestyles"
-              :inputId="lifestyle.key"
-              name="lifestyle"
-              :value="lifestyle.label"
-            />
-            <label :for="lifestyle.key" class="ml-2"
-              >{{ lifestyle.label }}
-            </label>
+            <div class="flex flex-column gap-2">
+              <label class="question-text">Where did you aquire PETNAME?</label>
+              <div class="grid">
+                <div
+                  v-for="option in petAquiredFromOptions"
+                  :key="option"
+                  class="flex align-items-center col-6"
+                >
+                  <RadioButton
+                    v-model="formData.pet_aquired_from"
+                    :inputId="option"
+                    name="pizza"
+                    :value="option"
+                  />
+                  <label :for="option" class="ml-2 line-height-2">{{
+                    option
+                  }}</label>
+                </div>
+                <Error :errArr="v$.pet_aquired_from.$errors" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Describe housing/enclosure -->
+          <div class="col-12 sm:col-6">
+            <div class="flex flex-column gap-2">
+              <label class="question-text" for="pet_name"
+                >Describe housing/enclosure (include substrate/litter)</label
+              >
+              <InputText
+                label="Pet Name"
+                v-model="formData.describe_housing"
+                :class="{
+                  'p-invalid':
+                    v$.describe_housing.$error && v$.describe_housing.$invalid,
+                }"
+                autofocus
+              ></InputText>
+              <Error :errArr="v$.describe_housing.$errors" />
+            </div>
           </div>
         </div>
-      </div>
+      </form>
     </section>
   </div>
 </template>

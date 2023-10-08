@@ -2,7 +2,7 @@
 import { useVuelidate } from '@vuelidate/core'
 import { email, helpers, minLength, required } from '@vuelidate/validators'
 import { useToast } from 'primevue/usetoast'
-import { savePetFormData } from 'utils/dataManagement'
+import { savePetFormData } from '~/utils/dataManagement'
 import {
   useCurrentUser,
   useCurrentUserProfile,
@@ -10,11 +10,11 @@ import {
   usePetProfileData,
 } from '~/composables/states.ts'
 import {
-  petTypes,
+  petOptions,
   petProfileSteps,
-  sexTypes,
-  yesNoTypes,
-  trackingTypes,
+  sexOptions,
+  yesNoOptions,
+  trackingOptions,
 } from '~/composables/globals.ts'
 
 definePageMeta({
@@ -92,7 +92,7 @@ const submit = async () => {
           <!-- Pet Name -->
           <div class="col-12 sm:col-6">
             <div class="flex flex-column gap-2">
-              <label for="pet_name">Pet name</label>
+              <label class="question-text" for="pet_name">Pet name</label>
               <InputText
                 label="Pet Name"
                 v-model="formData.name"
@@ -108,11 +108,11 @@ const submit = async () => {
           <!-- Pet Type -->
           <div class="col-12 sm:col-6">
             <div class="flex flex-column gap-2">
-              <label for="pet_type">Pet type</label>
+              <label class="question-text" for="pet_type">Pet type</label>
               <div class="card flex justify-content-center">
                 <Dropdown
                   v-model="formData.type"
-                  :options="petTypes"
+                  :options="petOptions"
                   optionLabel="type"
                   placeholder="Select"
                   class="w-full"
@@ -135,11 +135,11 @@ const submit = async () => {
           <!-- Sex -->
           <div class="col-12 sm:col-6">
             <div class="flex flex-column gap-2">
-              <label for="first_name">Sex</label>
+              <label class="question-text" for="first_name">Sex</label>
               <div class="card flex">
                 <SelectButton
                   v-model="formData.sex"
-                  :options="sexTypes"
+                  :options="sexOptions"
                   aria-labelledby="basic"
                 />
               </div>
@@ -150,12 +150,14 @@ const submit = async () => {
           <!-- Spayed / Neutered -->
           <div class="col-12 sm:col-6">
             <div class="flex flex-column gap-2">
-              <label for="spayed_neutered">Spayed / neutered</label>
+              <label class="question-text" for="spayed_neutered"
+                >Spayed / neutered</label
+              >
               <div class="card flex">
                 <SelectButton
                   label="spayed_neutered"
                   v-model="formData.spayed_neutered"
-                  :options="yesNoTypes"
+                  :options="yesNoOptions"
                   aria-labelledby="basic"
                 />
               </div>
@@ -166,7 +168,7 @@ const submit = async () => {
           <!-- Age -->
           <div class="col-12 sm:col-6">
             <div class="flex flex-column gap-2">
-              <label for="age">Date of birth</label>
+              <label class="question-text" for="age">Date of birth</label>
               <div class="card flex gap-4 align-items-center">
                 <Calendar v-model="formData.dob" showIcon />
               </div>
@@ -177,12 +179,14 @@ const submit = async () => {
           <!-- Microchipped / tattooed -->
           <div class="col-12 sm:col-6">
             <div class="flex flex-column gap-2">
-              <label for="microchipped_tattooed">Microchipped / tattooed</label>
+              <label class="question-text" for="microchipped_tattooed"
+                >Microchipped / tattooed</label
+              >
               <div class="card flex">
                 <SelectButton
                   label="microchipped_tattooed"
                   v-model="formData.tracking"
-                  :options="trackingTypes"
+                  :options="trackingOptions"
                   aria-labelledby="basic"
                   multiple
                 />

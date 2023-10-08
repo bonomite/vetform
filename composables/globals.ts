@@ -26,10 +26,11 @@ export const lifestyles: Array<{}> = [
 ];
 
 
-export const sexTypes: Array<{}> = ['Male', 'Female']
-export const yesNoTypes: Array<{}> = ['Yes', 'No']
-export const trackingTypes = ['Microchipped', 'Tattooed']
-export const petProfileSteps = [
+export const sexOptions: Array<{}> = ['Male', 'Female']
+export const yesNoOptions: Array<{}> = ['Yes', 'No']
+export const trackingOptions: Array<{}> = ['Microchipped', 'Tattooed']
+export const petAquiredFromOptions: Array<{}> = ['Breeder', 'Shelter / Rescue', 'Store', 'Private home', 'Stray', 'Other']
+export const petProfileSteps: Array<{}> = [
     {
         index: 0,
         label: 'Basics',

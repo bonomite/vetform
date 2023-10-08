@@ -6,6 +6,7 @@ import Checkbox from 'primevue/checkbox'
 import Dropdown from 'primevue/dropdown'
 import InputText from 'primevue/inputtext'
 import InputMask from 'primevue/inputmask'
+import RadioButton from 'primevue/radiobutton'
 import SelectButton from 'primevue/selectbutton'
 import Steps from 'primevue/steps'
 import Toast from 'primevue/toast'
@@ -20,6 +21,7 @@ export default defineNuxtPlugin((nuxtApp) => {
 	nuxtApp.vueApp.component('Dropdown', Dropdown)
 	nuxtApp.vueApp.component('InputText', InputText)
 	nuxtApp.vueApp.component('InputMask', InputMask)
+	nuxtApp.vueApp.component('RadioButton', RadioButton)
 	nuxtApp.vueApp.component('SelectButton', SelectButton)
 	nuxtApp.vueApp.component('Steps', Steps)
 	nuxtApp.vueApp.component('Toast', Toast)
