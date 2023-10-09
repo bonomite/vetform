@@ -10,4 +10,18 @@ export const useCurrentUserProfile = () => useState('useCurrentUserProfile', () 
 export const useCurrentPetProfileStep = () => useState('useCurrentPetProfileStep', () => 0)
 
 // global state pet-profile data
-export const usePetProfileData = () => useState('usePetProfileData', () => null)
+export const usePetProfileData = () => useState('usePetProfileData', () => ({
+    name: null,
+    type: null,
+    sex: null,
+    spayed_neutered: null,
+    dob: null,
+    tracking: null,
+    lifestyles: null,
+    lifestyles_other: null,
+    household_less_than_6_months: null,
+    pet_aquired_from: null,
+    describe_housing: null,
+    food: null,
+    grain_free: null,
+}))

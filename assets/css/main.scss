@@ -1,2 +1,15 @@
 @use 'abstract';
 @use 'base';
+
+.number-inc-dec {
+    min-width: 86px;
+    max-width: 86px;
+    .p-button {
+        width: 2rem;
+    }
+    .p-inputtext {
+        padding-left: 0;
+        padding-right: 0;
+        text-align: center;
+    }
+}

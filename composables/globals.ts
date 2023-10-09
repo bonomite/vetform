@@ -1,14 +1,14 @@
-export const petTypes: Array<{}> = [
-    { type: 'Dog' },
-    { type: 'Cat' },
-    { type: 'Rabbit' },
-    { type: 'Bird' },
-    { type: 'Guinea pig' },
-    { type: 'Hamster' },
-    { type: 'Chinchillas' },
-    { type: 'Rat' },
-    { type: 'Hedgehogs' },
-    { type: 'Other' },
+export const petOptions: Array<{}> = [
+    { label: 'Dog', exotic: false },
+    { label: 'Cat', exotic: false },
+    { label: 'Rabbit', exotic: true },
+    { label: 'Bird', exotic: true },
+    { label: 'Guinea pig', exotic: true },
+    { label: 'Hamster', exotic: true },
+    { label: 'Chinchillas', exotic: true },
+    { label: 'Rat', exotic: true },
+    { label: 'Hedgehogs', exotic: true },
+    { label: 'Other', exotic: true },
 ];
 
 export const lifestyles: Array<{}> = [
@@ -24,7 +24,6 @@ export const lifestyles: Array<{}> = [
     { label: 'Doggy play dates' },
     { label: 'Other' },
 ];
-
 
 export const sexOptions: Array<{}> = ['Male', 'Female']
 export const yesNoOptions: Array<{}> = ['Yes', 'No']

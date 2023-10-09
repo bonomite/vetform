@@ -113,7 +113,7 @@ const submit = async () => {
                 <Dropdown
                   v-model="formData.type"
                   :options="petOptions"
-                  optionLabel="type"
+                  optionLabel="label"
                   placeholder="Select"
                   class="w-full"
                 />

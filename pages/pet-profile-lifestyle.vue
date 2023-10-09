@@ -1,19 +1,23 @@
 <script setup>
-import { useCurrentPetProfileStep } from '~/composables/states.ts'
+import {
+  useCurrentPetProfileStep,
+  usePetProfileData,
+} from '~/composables/states.ts'
 import {
   lifestyles,
   yesNoOptions,
   petAquiredFromOptions,
+  petOptions,
 } from '~/composables/globals.ts'
 import { useVuelidate } from '@vuelidate/core'
 import { email, helpers, minLength, required } from '@vuelidate/validators'
 //import { useToast } from 'primevue/usetoast'
-import { savePetFormData } from '~/utils/dataManagement'
 
-const currentPetProfileStep = useCurrentPetProfileStep()
 definePageMeta({
   layout: 'pet',
 })
+const currentPetProfileStep = useCurrentPetProfileStep()
+const petProfileData = usePetProfileData()
 
 onBeforeMount(async () => {
   currentPetProfileStep.value = 1
@@ -31,6 +35,9 @@ const formData = reactive({
   household_less_than_6_months: null,
   pet_aquired_from: null,
   describe_housing: null,
+  food: null,
+  times_a_day: 0,
+  grain_free: null,
 })
 
 const rules = computed(() => {
@@ -42,6 +49,12 @@ const rules = computed(() => {
       required: helpers.withMessage('Answer is required', required),
     },
     describe_housing: {
+      required: helpers.withMessage('Answer is required', required),
+    },
+    food: {
+      required: helpers.withMessage('At leaset 1 food is required', required),
+    },
+    grain_free: {
       required: helpers.withMessage('Answer is required', required),
     },
   }
@@ -70,8 +83,8 @@ const submit = async () => {
 
       <form novalidate @submit.prevent="submit">
         <div class="grid row-gap-4 my-gutter">
-          <label class="question-text col-12">Select all that apply:</label>
           <div class="grid col-12">
+            <label class="question-text col-12">Select all that apply:</label>
             <div
               v-for="(lifestyle, index) of lifestyles"
               :key="lifestyle.key"
@@ -102,20 +115,21 @@ const submit = async () => {
                 />
               </div>
             </div>
-            <!-- household <6 months -->
           </div>
+
+          <!-- household <6 months -->
           <div class="col-12 sm:col-6">
             <div class="flex flex-column gap-2">
               <label class="question-text"
-                >Has PETNAME been in your household less than 6 months?</label
+                >Has {{ getName }} been in your household less than 6
+                months?</label
               >
-              <div class="card flex">
+              <div class="flex">
                 <SelectButton
                   label="spayed_neutered"
                   v-model="formData.household_less_than_6_months"
                   :options="yesNoOptions"
                   aria-labelledby="basic"
-                  @click="console.log(formData.household_less_than_6_months)"
                 />
               </div>
               <Error :errArr="v$.household_less_than_6_months.$errors" />
@@ -123,12 +137,15 @@ const submit = async () => {
           </div>
 
           <!-- Aquired -->
+          <!-- IF EXOTIC  or < 6 MONTHS -->
           <div
             class="col-12 sm:col-6"
-            v-if="formData.household_less_than_6_months === 'Yes'"
+            v-if="formData.household_less_than_6_months === 'Yes' || isExotic()"
           >
             <div class="flex flex-column gap-2">
-              <label class="question-text">Where did you aquire PETNAME?</label>
+              <label class="question-text"
+                >Where did you aquire {{ getName }}?</label
+              >
               <div class="grid">
                 <div
                   v-for="option in petAquiredFromOptions"
@@ -150,25 +167,84 @@ const submit = async () => {
             </div>
           </div>
 
+          <!-- IF EXOTIC  -->
           <!-- Describe housing/enclosure -->
-          <div class="col-12 sm:col-6">
+          <div v-if="isExotic()" class="col-12 sm:col-6">
             <div class="flex flex-column gap-2">
               <label class="question-text" for="pet_name"
                 >Describe housing/enclosure (include substrate/litter)</label
               >
-              <InputText
-                label="Pet Name"
+              <Textarea
                 v-model="formData.describe_housing"
+                rows="4"
+                cols="30"
                 :class="{
                   'p-invalid':
                     v$.describe_housing.$error && v$.describe_housing.$invalid,
                 }"
-                autofocus
-              ></InputText>
+              />
               <Error :errArr="v$.describe_housing.$errors" />
             </div>
           </div>
+
+          <!-- food -->
+          <div class="col-12 md:col-6">
+            <div class="flex flex-column gap-2">
+              <label class="question-text">
+                What are the foods and snacks you give?
+              </label>
+              <div class="food-entry flex gap-3 align-items-center p-fluid">
+                <InputText
+                  v-model="formData.food"
+                  type="text"
+                  placeholder="Food name"
+                />
+                <div class="flex flex-none gap-1">
+                  <InputNumber
+                    class="number-inc-dec"
+                    v-model="formData.times_a_day"
+                    inputId="horizontal-buttons"
+                    showButtons
+                    buttonLayout="horizontal"
+                    :step="1"
+                    decrementButtonClass="p-button-danger"
+                    incrementButtonClass="p-button-success"
+                    incrementButtonIcon="pi pi-plus"
+                    decrementButtonIcon="pi pi-minus"
+                    :min="0"
+                    :max="9"
+                  />
+                  <p class="text-sm flex-none">times a day</p>
+                </div>
+                <Button rounded text severity="secondary" icon="pi pi-trash" />
+              </div>
+              <Error :errArr="v$.food.$errors" />
+              <div class="flex gap-2 align-items-center">
+                <Button rounded icon="pi pi-plus" />
+                <p>Add another product</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- grain free -->
+          <div class="col-12 sm:col-6">
+            <div class="flex flex-column gap-2">
+              <label class="question-text"
+                >Are any of these foods raw or grain free?</label
+              >
+              <div class="flex">
+                <SelectButton
+                  label="spayed_neutered"
+                  v-model="formData.grain_free"
+                  :options="yesNoOptions"
+                  aria-labelledby="basic"
+                />
+              </div>
+              <Error :errArr="v$.grain_free.$errors" />
+            </div>
+          </div>
         </div>
+        <Button type="submit" label="Continue" />
       </form>
     </section>
   </div>
