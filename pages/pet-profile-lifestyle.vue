@@ -1,5 +1,8 @@
 <script setup>
-import { useCurrentPetProfileStep } from '~/composables/states.ts'
+import {
+  useCurrentPetProfileStep,
+  usePetProfileData,
+} from '~/composables/states.ts'
 import {
   lifestyles,
   yesNoOptions,
@@ -13,6 +16,7 @@ definePageMeta({
   layout: 'pet',
 })
 const currentPetProfileStep = useCurrentPetProfileStep()
+const petProfileData = usePetProfileData()
 
 onBeforeMount(async () => {
   currentPetProfileStep.value = 1
@@ -32,7 +36,6 @@ const formData = reactive({
   pet_aquired_from: null,
   describe_housing: null,
   food: [foodEntryObject()],
-  times_a_day: 0,
   grain_free: null,
 })
 
@@ -76,9 +79,10 @@ const addFoodEntry = () => {
   formData.food.push(foodEntryObject())
 }
 
-watch(formData.food, (newVal) => {
-  console.log('newVal', newVal)
+watch(formData, (newVal) => {
+  console.log('formData', newVal)
 })
+console.log('petProfileData', petProfileData)
 </script>
 <template>
   <div class="pet-profile">
@@ -203,7 +207,7 @@ watch(formData.food, (newVal) => {
                 v-model:times="entry.times_a_day"
                 :index="index"
                 :totalLength="formData.food.length"
-                :key="entry.product"
+                :key="`product-${index}`"
                 @remove="formData.food.splice(index, 1)"
               />
               <Error :errArr="v$.food.$errors" />
