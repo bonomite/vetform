@@ -22,6 +22,6 @@ export const usePetProfileData = () => useState('usePetProfileData', () => ({
     household_less_than_6_months: null,
     pet_aquired_from: null,
     describe_housing: null,
-    food: null,
+    food: [{ product: '', times_a_day: 1 }],
     grain_free: null,
 }))

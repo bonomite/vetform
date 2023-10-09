@@ -51,4 +51,3 @@ export const petProfileSteps: Array<{}> = [
         route: '/pet-profile-insurance',
     },
 ]
-

@@ -122,16 +122,6 @@ const submit = async () => {
             </div>
           </div>
 
-          <!-- Sex Test -->
-          <!-- <div class="col-12 sm:col-6">
-          <SelectButtonQuestion
-            label="Sex"
-            :options="['Male', 'Female ']"
-            sbTable="pets"
-            sbColumn="sex"
-          />
-        </div> -->
-
           <!-- Sex -->
           <div class="col-12 sm:col-6">
             <div class="flex flex-column gap-2">

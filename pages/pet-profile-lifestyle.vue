@@ -29,13 +29,14 @@ const lastLifestyle = (index) => {
   }
   return false
 }
+
 const formData = reactive({
   lifestyles: null,
   lifestyles_other: null,
   household_less_than_6_months: null,
   pet_aquired_from: null,
   describe_housing: null,
-  food: null,
+  food: [{ product: '', times_a_day: 0 }],
   times_a_day: 0,
   grain_free: null,
 })
@@ -75,6 +76,14 @@ const submit = async () => {
     navigateTo(petProfileSteps[2].route)
   }
 }
+
+const addFoodEntry = () => {
+  formData.food.push({ product: '', times_a_day: 0 })
+}
+
+watch(formData.food, (newVal) => {
+  console.log('newVal', newVal)
+})
 </script>
 <template>
   <div class="pet-profile">
@@ -193,7 +202,16 @@ const submit = async () => {
               <label class="question-text">
                 What are the foods and snacks you give?
               </label>
-              <div class="food-entry flex gap-3 align-items-center p-fluid">
+              <FoodEntry
+                v-for="(entry, index) of formData.food"
+                v-model:product="entry.product"
+                v-model:times="entry.times_a_day"
+                :index="index"
+                :totalLength="formData.food.length"
+                :key="entry.product"
+                @remove="formData.food.splice(index, 1)"
+              />
+              <!-- <div class="food-entry flex gap-3 align-items-center p-fluid">
                 <InputText
                   v-model="formData.food"
                   type="text"
@@ -207,8 +225,6 @@ const submit = async () => {
                     showButtons
                     buttonLayout="horizontal"
                     :step="1"
-                    decrementButtonClass="p-button-danger"
-                    incrementButtonClass="p-button-success"
                     incrementButtonIcon="pi pi-plus"
                     decrementButtonIcon="pi pi-minus"
                     :min="0"
@@ -216,11 +232,17 @@ const submit = async () => {
                   />
                   <p class="text-sm flex-none">times a day</p>
                 </div>
-                <Button rounded text severity="secondary" icon="pi pi-trash" />
-              </div>
+                <Button
+                  rounded
+                  text
+                  severity="secondary"
+                  icon="pi pi-trash"
+                  class="border-none shadow-none"
+                />
+              </div> -->
               <Error :errArr="v$.food.$errors" />
               <div class="flex gap-2 align-items-center">
-                <Button rounded icon="pi pi-plus" />
+                <Button rounded icon="pi pi-plus" @click="addFoodEntry" />
                 <p>Add another product</p>
               </div>
             </div>
