@@ -22,17 +22,9 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['update', 'remove'])
+const emit = defineEmits(['update:product', 'update:times', 'remove'])
 const internalProduct = ref(props.product)
 const internalTimes = ref(props.times)
-
-const update = () => {
-  console.log('update')
-  emit('update', {
-    product: internalProduct.value,
-    times_a_day: internalTimes.value,
-  })
-}
 </script>
 
 <template>
@@ -44,7 +36,7 @@ const update = () => {
       :class="{
         'p-invalid': invalid,
       }"
-      @update:modelValue="update"
+      @update:modelValue="emit('update:product', $event)"
     />
     <div class="flex flex-none gap-1">
       <InputNumber
@@ -58,7 +50,7 @@ const update = () => {
         decrementButtonIcon="pi pi-minus"
         :min="0"
         :max="9"
-        @update:modelValue="update"
+        @update:modelValue="emit('update:times', $event)"
       />
       <p class="text-sm flex-none">times a day</p>
     </div>

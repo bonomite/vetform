@@ -78,10 +78,19 @@ const submit = async () => {
 const addFoodEntry = () => {
   formData.food.push(foodEntryObject())
 }
+const updateFoodEntry = (dataObj, id) => {
+  const thisEntry = formData.food.find((entry) => entry.id === id)
+  thisEntry.product = dataObj.product
+  thisEntry.times_a_day = dataObj.times_a_day
+}
+const removeFoodEntry = (id) => {
+  formData.food = formData.food.filter((entry) => entry.id !== id)
+}
 
 watch(formData, (newVal) => {
   console.log('formData', newVal)
 })
+
 console.log('petProfileData', petProfileData)
 </script>
 <template>
@@ -208,14 +217,25 @@ console.log('petProfileData', petProfileData)
               </label>
               <FoodEntry
                 v-for="(entry, index) of formData.food"
+                :product="entry.product"
+                :times="entry.times_a_day"
+                :index="index"
+                :totalLength="formData.food.length"
+                :key="`product-${entry.id}`"
+                :invalid="v$.food.$error && v$.food.$invalid"
+                @update="updateFoodEntry($event, entry.id)"
+                @remove="removeFoodEntry(entry.id)"
+              />
+              <!-- <FoodEntry
+                v-for="(entry, index) of formData.food"
                 v-model:product="entry.product"
                 v-model:times="entry.times_a_day"
                 :index="index"
                 :totalLength="formData.food.length"
-                :key="`product-${index}`"
-                @remove="formData.food.splice(index, 1)"
+                :key="`product-${entry.id}`"
+                @remove="removeFoodEntry(entry.id)"
                 :invalid="v$.food.$error && v$.food.$invalid"
-              />
+              /> -->
               <Error :errArr="v$.food.$errors" />
               <div class="flex gap-2 align-items-center">
                 <Button rounded icon="pi pi-plus" @click="addFoodEntry" />

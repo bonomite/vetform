@@ -52,4 +52,8 @@ export const petProfileSteps: Array<{}> = [
     },
 ]
 
-export const foodEntryObject = () => ({ product: '', times_a_day: 0 })
+export const randomId = function (length = 6) {
+    return Math.random().toString(36).substring(2, length + 2);
+};
+
+export const foodEntryObject = () => ({ id: randomId(), product: '', times_a_day: 0 })
