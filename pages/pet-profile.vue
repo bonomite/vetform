@@ -104,6 +104,9 @@ const submit = async () => {
                   optionLabel="label"
                   placeholder="Select"
                   class="w-full"
+                  :class="{
+                    'p-invalid': v$.type.$error && v$.type.$invalid,
+                  }"
                 />
               </div>
               <Error :errArr="v$.type.$errors" />
@@ -119,6 +122,9 @@ const submit = async () => {
                   v-model="formData.sex"
                   :options="sexOptions"
                   aria-labelledby="basic"
+                  :class="{
+                    'p-invalid': v$.sex.$error && v$.sex.$invalid,
+                  }"
                 />
               </div>
               <Error :errArr="v$.sex.$errors" />
@@ -137,6 +143,10 @@ const submit = async () => {
                   v-model="formData.spayed_neutered"
                   :options="yesNoOptions"
                   aria-labelledby="basic"
+                  :class="{
+                    'p-invalid':
+                      v$.spayed_neutered.$error && v$.spayed_neutered.$invalid,
+                  }"
                 />
               </div>
               <Error :errArr="v$.spayed_neutered.$errors" />
@@ -148,7 +158,13 @@ const submit = async () => {
             <div class="flex flex-column gap-2">
               <label class="question-text" for="age">Date of birth</label>
               <div class="card flex gap-4 align-items-center">
-                <Calendar v-model="formData.dob" showIcon />
+                <Calendar
+                  v-model="formData.dob"
+                  showIcon
+                  :class="{
+                    'p-invalid': v$.dob.$error && v$.dob.$invalid,
+                  }"
+                />
               </div>
               <Error :errArr="v$.dob.$errors" />
             </div>

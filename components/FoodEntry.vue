@@ -16,6 +16,10 @@ const props = defineProps({
     type: Number,
     required: true,
   },
+  invalid: {
+    type: Boolean,
+    required: false,
+  },
 })
 
 const emit = defineEmits(['update:product', 'update:times', 'remove'])
@@ -29,6 +33,9 @@ const internalTimes = ref(props.times)
       v-model="internalProduct"
       type="text"
       placeholder="Food name"
+      :class="{
+        'p-invalid': invalid,
+      }"
       @update:modelValue="emit('update:product', $event)"
     />
     <div class="flex flex-none gap-1">

@@ -138,6 +138,11 @@ console.log('petProfileData', petProfileData)
                   v-model="formData.household_less_than_6_months"
                   :options="yesNoOptions"
                   aria-labelledby="basic"
+                  :class="{
+                    'p-invalid':
+                      v$.household_less_than_6_months.$error &&
+                      v$.household_less_than_6_months.$invalid,
+                  }"
                 />
               </div>
               <Error :errArr="v$.household_less_than_6_months.$errors" />
@@ -209,6 +214,7 @@ console.log('petProfileData', petProfileData)
                 :totalLength="formData.food.length"
                 :key="`product-${index}`"
                 @remove="formData.food.splice(index, 1)"
+                :invalid="v$.food.$error && v$.food.$invalid"
               />
               <Error :errArr="v$.food.$errors" />
               <div class="flex gap-2 align-items-center">
@@ -230,6 +236,9 @@ console.log('petProfileData', petProfileData)
                   v-model="formData.grain_free"
                   :options="yesNoOptions"
                   aria-labelledby="basic"
+                  :class="{
+                    'p-invalid': v$.grain_free.$error && v$.grain_free.$invalid,
+                  }"
                 />
               </div>
               <Error :errArr="v$.grain_free.$errors" />
