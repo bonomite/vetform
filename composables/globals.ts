@@ -1,20 +1,35 @@
-export const petTypes: Array<{}> = [
-    { type: 'Dog' },
-    { type: 'Cat' },
-    { type: 'Rabbit' },
-    { type: 'Bird' },
-    { type: 'Guinea pig' },
-    { type: 'Hamster' },
-    { type: 'Chinchillas' },
-    { type: 'Rat' },
-    { type: 'Hedgehogs' },
-    { type: 'Other' },
+export const petOptions: Array<{}> = [
+    { label: 'Dog', exotic: false },
+    { label: 'Cat', exotic: false },
+    { label: 'Rabbit', exotic: true },
+    { label: 'Bird', exotic: true },
+    { label: 'Guinea pig', exotic: true },
+    { label: 'Hamster', exotic: true },
+    { label: 'Chinchillas', exotic: true },
+    { label: 'Rat', exotic: true },
+    { label: 'Hedgehogs', exotic: true },
+    { label: 'Other', exotic: true },
 ];
 
-export const sexTypes: Array<{}> = ['Male', 'Female']
-export const yesNoTypes: Array<{}> = ['Yes', 'No']
-export const trackingTypes = ['Microchipped', 'Tattooed']
-export const petProfileSteps = [
+export const lifestyles: Array<{}> = [
+    { label: 'Boarding' },
+    { label: 'Grooming' },
+    { label: 'Daycare' },
+    { label: 'Dog Park' },
+    { label: 'Hiking' },
+    { label: 'Hunting' },
+    { label: 'Travel' },
+    { label: 'Backyard' },
+    { label: 'Neighborhoos walks' },
+    { label: 'Doggy play dates' },
+    { label: 'Other' },
+];
+
+export const sexOptions: Array<{}> = ['Male', 'Female']
+export const yesNoOptions: Array<{}> = ['Yes', 'No']
+export const trackingOptions: Array<{}> = ['Microchipped', 'Tattooed']
+export const petAquiredFromOptions: Array<{}> = ['Breeder', 'Shelter / Rescue', 'Store', 'Private home', 'Stray', 'Other']
+export const petProfileSteps: Array<{}> = [
     {
         index: 0,
         label: 'Basics',
@@ -37,3 +52,8 @@ export const petProfileSteps = [
     },
 ]
 
+export const randomId = function (length = 6) {
+    return Math.random().toString(36).substring(2, length + 2);
+};
+
+export const foodEntryObject = () => ({ id: randomId(), product: '', times_a_day: 0 })

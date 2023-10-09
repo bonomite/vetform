@@ -1,30 +1,26 @@
 <script setup>
 import { useVuelidate } from '@vuelidate/core'
-import { email, helpers, minLength, required } from '@vuelidate/validators'
-import { useToast } from 'primevue/usetoast'
-import { useCurrentUser, useCurrentUserProfile } from '~/composables/states.ts'
+import { helpers, required } from '@vuelidate/validators'
+import { savePetFormData } from '~/utils/dataManagement'
+import { useCurrentPetProfileStep } from '~/composables/states.ts'
 import {
-  petTypes,
+  petOptions,
   petProfileSteps,
-  sexTypes,
-  yesNoTypes,
-  trackingTypes,
+  sexOptions,
+  yesNoOptions,
+  trackingOptions,
 } from '~/composables/globals.ts'
 
 definePageMeta({
   layout: 'pet',
 })
-const currentUser = useCurrentUser()
-const currentUserProfile = useCurrentUserProfile()
-const toast = useToast()
-const client = useSupabaseClient()
 
+const currentPetProfileStep = useCurrentPetProfileStep()
 const tempPetsCount = ref(0)
 
-const isActive = (item) => {
-  console.log('item   ', item)
-  return item.index === currentStep.value ? true : false
-}
+onBeforeMount(async () => {
+  currentPetProfileStep.value = 0
+})
 
 const rules = computed(() => {
   return {
@@ -64,7 +60,9 @@ const submit = async () => {
 
     // update global state for pet profile
     // update browser local storage for pet profile
+    savePetFormData(formData)
 
+    // navigate to next step
     navigateTo(petProfileSteps[1].route)
   }
 }
@@ -82,7 +80,7 @@ const submit = async () => {
           <!-- Pet Name -->
           <div class="col-12 sm:col-6">
             <div class="flex flex-column gap-2">
-              <label for="pet_name">Pet name</label>
+              <label class="question-text" for="pet_name">Pet name</label>
               <InputText
                 label="Pet Name"
                 v-model="formData.name"
@@ -98,39 +96,35 @@ const submit = async () => {
           <!-- Pet Type -->
           <div class="col-12 sm:col-6">
             <div class="flex flex-column gap-2">
-              <label for="pet_type">Pet type</label>
+              <label class="question-text" for="pet_type">Pet type</label>
               <div class="card flex justify-content-center">
                 <Dropdown
                   v-model="formData.type"
-                  :options="petTypes"
-                  optionLabel="type"
+                  :options="petOptions"
+                  optionLabel="label"
                   placeholder="Select"
                   class="w-full"
+                  :class="{
+                    'p-invalid': v$.type.$error && v$.type.$invalid,
+                  }"
                 />
               </div>
               <Error :errArr="v$.type.$errors" />
             </div>
           </div>
 
-          <!-- Sex Test -->
-          <!-- <div class="col-12 sm:col-6">
-          <SelectButtonQuestion
-            label="Sex"
-            :options="['Male', 'Female ']"
-            sbTable="pets"
-            sbColumn="sex"
-          />
-        </div> -->
-
           <!-- Sex -->
           <div class="col-12 sm:col-6">
             <div class="flex flex-column gap-2">
-              <label for="first_name">Sex</label>
+              <label class="question-text" for="first_name">Sex</label>
               <div class="card flex">
                 <SelectButton
                   v-model="formData.sex"
-                  :options="sexTypes"
+                  :options="sexOptions"
                   aria-labelledby="basic"
+                  :class="{
+                    'p-invalid': v$.sex.$error && v$.sex.$invalid,
+                  }"
                 />
               </div>
               <Error :errArr="v$.sex.$errors" />
@@ -140,13 +134,19 @@ const submit = async () => {
           <!-- Spayed / Neutered -->
           <div class="col-12 sm:col-6">
             <div class="flex flex-column gap-2">
-              <label for="spayed_neutered">Spayed / neutered</label>
+              <label class="question-text" for="spayed_neutered"
+                >Spayed / neutered</label
+              >
               <div class="card flex">
                 <SelectButton
                   label="spayed_neutered"
                   v-model="formData.spayed_neutered"
-                  :options="yesNoTypes"
+                  :options="yesNoOptions"
                   aria-labelledby="basic"
+                  :class="{
+                    'p-invalid':
+                      v$.spayed_neutered.$error && v$.spayed_neutered.$invalid,
+                  }"
                 />
               </div>
               <Error :errArr="v$.spayed_neutered.$errors" />
@@ -156,9 +156,15 @@ const submit = async () => {
           <!-- Age -->
           <div class="col-12 sm:col-6">
             <div class="flex flex-column gap-2">
-              <label for="age">Date of birth</label>
+              <label class="question-text" for="age">Date of birth</label>
               <div class="card flex gap-4 align-items-center">
-                <Calendar v-model="formData.dob" showIcon />
+                <Calendar
+                  v-model="formData.dob"
+                  showIcon
+                  :class="{
+                    'p-invalid': v$.dob.$error && v$.dob.$invalid,
+                  }"
+                />
               </div>
               <Error :errArr="v$.dob.$errors" />
             </div>
@@ -167,12 +173,14 @@ const submit = async () => {
           <!-- Microchipped / tattooed -->
           <div class="col-12 sm:col-6">
             <div class="flex flex-column gap-2">
-              <label for="microchipped_tattooed">Microchipped / tattooed</label>
+              <label class="question-text" for="microchipped_tattooed"
+                >Microchipped / tattooed</label
+              >
               <div class="card flex">
                 <SelectButton
                   label="microchipped_tattooed"
                   v-model="formData.tracking"
-                  :options="trackingTypes"
+                  :options="trackingOptions"
                   aria-labelledby="basic"
                   multiple
                 />
