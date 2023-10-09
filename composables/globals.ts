@@ -51,3 +51,5 @@ export const petProfileSteps: Array<{}> = [
         route: '/pet-profile-insurance',
     },
 ]
+
+export const foodEntryObject = () => ({ product: '', times_a_day: 0 })

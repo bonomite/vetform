@@ -1,14 +1,8 @@
 <script setup>
 import { useVuelidate } from '@vuelidate/core'
-import { email, helpers, minLength, required } from '@vuelidate/validators'
-import { useToast } from 'primevue/usetoast'
+import { helpers, required } from '@vuelidate/validators'
 import { savePetFormData } from '~/utils/dataManagement'
-import {
-  useCurrentUser,
-  useCurrentUserProfile,
-  useCurrentPetProfileStep,
-  usePetProfileData,
-} from '~/composables/states.ts'
+import { useCurrentPetProfileStep } from '~/composables/states.ts'
 import {
   petOptions,
   petProfileSteps,
@@ -22,12 +16,6 @@ definePageMeta({
 })
 
 const currentPetProfileStep = useCurrentPetProfileStep()
-const petProfileData = usePetProfileData()
-const currentUser = useCurrentUser()
-const currentUserProfile = useCurrentUserProfile()
-const toast = useToast()
-const client = useSupabaseClient()
-
 const tempPetsCount = ref(0)
 
 onBeforeMount(async () => {

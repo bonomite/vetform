@@ -1,23 +1,18 @@
 <script setup>
-import {
-  useCurrentPetProfileStep,
-  usePetProfileData,
-} from '~/composables/states.ts'
+import { useCurrentPetProfileStep } from '~/composables/states.ts'
 import {
   lifestyles,
   yesNoOptions,
   petAquiredFromOptions,
-  petOptions,
+  foodEntryObject,
 } from '~/composables/globals.ts'
 import { useVuelidate } from '@vuelidate/core'
 import { email, helpers, minLength, required } from '@vuelidate/validators'
-//import { useToast } from 'primevue/usetoast'
 
 definePageMeta({
   layout: 'pet',
 })
 const currentPetProfileStep = useCurrentPetProfileStep()
-const petProfileData = usePetProfileData()
 
 onBeforeMount(async () => {
   currentPetProfileStep.value = 1
@@ -36,7 +31,7 @@ const formData = reactive({
   household_less_than_6_months: null,
   pet_aquired_from: null,
   describe_housing: null,
-  food: [{ product: '', times_a_day: 0 }],
+  food: [foodEntryObject()],
   times_a_day: 0,
   grain_free: null,
 })
@@ -78,7 +73,7 @@ const submit = async () => {
 }
 
 const addFoodEntry = () => {
-  formData.food.push({ product: '', times_a_day: 0 })
+  formData.food.push(foodEntryObject())
 }
 
 watch(formData.food, (newVal) => {
@@ -211,35 +206,6 @@ watch(formData.food, (newVal) => {
                 :key="entry.product"
                 @remove="formData.food.splice(index, 1)"
               />
-              <!-- <div class="food-entry flex gap-3 align-items-center p-fluid">
-                <InputText
-                  v-model="formData.food"
-                  type="text"
-                  placeholder="Food name"
-                />
-                <div class="flex flex-none gap-1">
-                  <InputNumber
-                    class="number-inc-dec"
-                    v-model="formData.times_a_day"
-                    inputId="horizontal-buttons"
-                    showButtons
-                    buttonLayout="horizontal"
-                    :step="1"
-                    incrementButtonIcon="pi pi-plus"
-                    decrementButtonIcon="pi pi-minus"
-                    :min="0"
-                    :max="9"
-                  />
-                  <p class="text-sm flex-none">times a day</p>
-                </div>
-                <Button
-                  rounded
-                  text
-                  severity="secondary"
-                  icon="pi pi-trash"
-                  class="border-none shadow-none"
-                />
-              </div> -->
               <Error :errArr="v$.food.$errors" />
               <div class="flex gap-2 align-items-center">
                 <Button rounded icon="pi pi-plus" @click="addFoodEntry" />
