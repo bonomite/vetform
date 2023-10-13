@@ -1,3 +1,4 @@
+import { reactive } from 'vue'
 const currentUser = null
 // global state for the current authorized user
 export const useCurrentUser = () => useState('useCurrentUser', () => currentUser)
@@ -25,3 +26,12 @@ export const usePetProfileData = () => useState('usePetProfileData', () => ({
     food: [{ product: '', times_a_day: 1 }],
     grain_free: null,
 }))
+if (process.client) {
+    const localFormData = JSON.parse(localStorage.getItem('myPetProfileFormData'))
+
+    const petProfileData = reactive(usePetProfileData())
+
+    if (localFormData) {
+        petProfileData.value = localFormData
+    }
+}

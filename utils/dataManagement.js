@@ -2,12 +2,13 @@ import { reactive } from 'vue'
 import { usePetProfileData } from '~/composables/states.ts'
 
 export const savePetFormData = (formData) => {
-    const petProfileData = reactive(usePetProfileData().value)
+    const petProfileData = reactive(usePetProfileData())
     //update global state for pet profile
-    Object.assign(petProfileData, formData)
+    petProfileData.value = { ...petProfileData.value, ...formData }
+
     // update browser local storage for pet profile
     localStorage.setItem(
         'myPetProfileFormData',
-        JSON.stringify(petProfileData)
+        JSON.stringify(petProfileData.value)
     )
 }

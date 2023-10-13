@@ -39,6 +39,21 @@ const formData = reactive({
   grain_free: null,
 })
 
+onMounted(() => {
+  const localFormData = JSON.parse(localStorage.getItem('myPetProfileFormData'))
+
+  if (localFormData) {
+    formData.lifestyles = localFormData.lifestyles ?? null
+    formData.lifestyles_other = localFormData.lifestyles_other ?? null
+    formData.household_less_than_6_months =
+      localFormData.household_less_than_6_months ?? null
+    formData.pet_aquired_from = localFormData.pet_aquired_from ?? null
+    formData.describe_housing = localFormData.describe_housing ?? null
+    formData.food = localFormData.food ?? [foodEntryObject()]
+    formData.grain_free = localFormData.grain_free ?? null
+  }
+})
+
 const rules = computed(() => {
   return {
     household_less_than_6_months: {
@@ -137,10 +152,12 @@ console.log('petProfileData', petProfileData)
           <!-- household <6 months -->
           <div class="col-12 sm:col-6">
             <div class="flex flex-column gap-2">
-              <label class="question-text"
-                >Has {{ getName }} been in your household less than 6
-                months?</label
-              >
+              <ClientOnly>
+                <label class="question-text"
+                  >Has {{ getName }} been in your household less than 6
+                  months?</label
+                >
+              </ClientOnly>
               <div class="flex">
                 <SelectButton
                   label="spayed_neutered"
@@ -160,54 +177,61 @@ console.log('petProfileData', petProfileData)
 
           <!-- Aquired -->
           <!-- IF EXOTIC  or < 6 MONTHS -->
-          <div
-            class="col-12 sm:col-6"
-            v-if="formData.household_less_than_6_months === 'Yes' || isExotic()"
-          >
-            <div class="flex flex-column gap-2">
-              <label class="question-text"
-                >Where did you aquire {{ getName }}?</label
-              >
-              <div class="grid">
-                <div
-                  v-for="option in petAquiredFromOptions"
-                  :key="option"
-                  class="flex align-items-center col-6"
+          <ClientOnly>
+            <div
+              class="col-12 sm:col-6"
+              v-if="
+                formData.household_less_than_6_months === 'Yes' || isExotic()
+              "
+            >
+              <div class="flex flex-column gap-2">
+                <label class="question-text"
+                  >Where did you aquire {{ getName }}?</label
                 >
-                  <RadioButton
-                    v-model="formData.pet_aquired_from"
-                    :inputId="option"
-                    name="pizza"
-                    :value="option"
-                  />
-                  <label :for="option" class="ml-2 line-height-2">{{
-                    option
-                  }}</label>
+                <div class="grid">
+                  <div
+                    v-for="option in petAquiredFromOptions"
+                    :key="option"
+                    class="flex align-items-center col-6"
+                  >
+                    <RadioButton
+                      v-model="formData.pet_aquired_from"
+                      :inputId="option"
+                      name="pizza"
+                      :value="option"
+                    />
+                    <label :for="option" class="ml-2 line-height-2">{{
+                      option
+                    }}</label>
+                  </div>
+                  <Error :errArr="v$.pet_aquired_from.$errors" />
                 </div>
-                <Error :errArr="v$.pet_aquired_from.$errors" />
               </div>
             </div>
-          </div>
+          </ClientOnly>
 
           <!-- IF EXOTIC  -->
           <!-- Describe housing/enclosure -->
-          <div v-if="isExotic()" class="col-12 sm:col-6">
-            <div class="flex flex-column gap-2">
-              <label class="question-text" for="pet_name"
-                >Describe housing/enclosure (include substrate/litter)</label
-              >
-              <Textarea
-                v-model="formData.describe_housing"
-                rows="4"
-                cols="30"
-                :class="{
-                  'p-invalid':
-                    v$.describe_housing.$error && v$.describe_housing.$invalid,
-                }"
-              />
-              <Error :errArr="v$.describe_housing.$errors" />
+          <ClientOnly>
+            <div v-if="isExotic()" class="col-12 sm:col-6">
+              <div class="flex flex-column gap-2">
+                <label class="question-text" for="pet_name"
+                  >Describe housing/enclosure (include substrate/litter)</label
+                >
+                <Textarea
+                  v-model="formData.describe_housing"
+                  rows="4"
+                  cols="30"
+                  :class="{
+                    'p-invalid':
+                      v$.describe_housing.$error &&
+                      v$.describe_housing.$invalid,
+                  }"
+                />
+                <Error :errArr="v$.describe_housing.$errors" />
+              </div>
             </div>
-          </div>
+          </ClientOnly>
 
           <!-- food -->
           <div class="col-12 md:col-6">

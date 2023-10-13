@@ -3,6 +3,7 @@ import { useVuelidate } from '@vuelidate/core'
 import { helpers, required } from '@vuelidate/validators'
 import { savePetFormData } from '~/utils/dataManagement'
 import { useCurrentPetProfileStep } from '~/composables/states.ts'
+import { usePetProfileData } from '~/composables/states.ts'
 import {
   petOptions,
   petProfileSteps,
@@ -17,6 +18,7 @@ definePageMeta({
 
 const currentPetProfileStep = useCurrentPetProfileStep()
 const tempPetsCount = ref(0)
+const petProfileData = usePetProfileData()
 
 onBeforeMount(async () => {
   currentPetProfileStep.value = 0
@@ -50,6 +52,22 @@ const formData = reactive({
   dob: null,
   tracking: null,
 })
+
+onMounted(() => {
+  const localFormData = JSON.parse(localStorage.getItem('myPetProfileFormData'))
+  if (localFormData) {
+    formData.name = localFormData.name ?? null
+    formData.type = localFormData.type ?? null
+    formData.sex = localFormData.sex ?? null
+    formData.spayed_neutered = localFormData.spayed_neutered ?? null
+    formData.dob = new Date(localFormData.dob) ?? null
+    formData.tracking = localFormData.tracking ?? null
+  }
+
+  console.log('petProfileData NAME = ', petProfileData.value)
+})
+
+watch(petProfileData, () => {})
 
 const v$ = useVuelidate(rules, formData)
 

@@ -1,7 +1,15 @@
 <script setup>
-import { usePetProfileData } from '~/composables/states.ts'
+import {
+  usePetProfileData,
+  useCurrentPetProfileStep,
+} from '~/composables/states.ts'
+
 definePageMeta({
   layout: 'pet',
+})
+const currentPetProfileStep = useCurrentPetProfileStep()
+onBeforeMount(async () => {
+  currentPetProfileStep.value = 2
 })
 const petProfileData = usePetProfileData()
 
