@@ -1,4 +1,6 @@
 <script setup>
+const { $gsap } = useNuxtApp()
+
 const props = defineProps({
   product: {
     type: String,
@@ -26,17 +28,40 @@ const emit = defineEmits(['update', 'remove'])
 const internalProduct = ref(props.product)
 const internalTimes = ref(props.times)
 
+const foodEntryRef = ref(null)
+
 const update = () => {
-  console.log('update')
   emit('update', {
     product: internalProduct.value,
     times_a_day: internalTimes.value,
   })
 }
+
+const remove = (e) => {
+  $gsap.to(foodEntryRef.value, {
+    opacity: 0,
+    height: 0,
+    duration: 0.25,
+    onComplete: () => {
+      emit('remove', e)
+    },
+  })
+}
+
+onMounted(() => {
+  if (internalProduct.value) {
+    $gsap.set(foodEntryRef.value, { opacity: 1, height: 52 })
+  } else {
+    $gsap.to(foodEntryRef.value, { opacity: 1, height: 52, duration: 0.25 })
+  }
+})
 </script>
 
 <template>
-  <div class="food-entry flex gap-3 align-items-center p-fluid">
+  <div
+    ref="foodEntryRef"
+    class="food-entry flex gap-3 align-items-center p-fluid"
+  >
     <InputText
       v-model="internalProduct"
       type="text"
@@ -68,7 +93,7 @@ const update = () => {
       severity="secondary"
       icon="pi pi-trash"
       class="border-none shadow-none"
-      @click="emit('remove', $event)"
+      @click="remove"
       :disabled="totalLength === 1 && index === 0"
     />
   </div>
@@ -76,5 +101,8 @@ const update = () => {
 
 <style lang="scss" scoped>
 .food-entry {
+  opacity: 0;
+  height: 0;
+  overflow: hidden;
 }
 </style>

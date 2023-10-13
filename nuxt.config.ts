@@ -9,7 +9,7 @@ export default defineNuxtConfig({
 	build: {
 		transpile: ['primevue'],
 	},
-	modules: ['@nuxt/image', '@zadigetvoltaire/nuxt-gtm', '@nuxtjs/supabase'],
+	modules: ['@nuxt/image', '@zadigetvoltaire/nuxt-gtm', '@nuxtjs/supabase', '@hypernym/nuxt-gsap'],
 	image: {
 		dir: 'assets/images',
 		screens: {
