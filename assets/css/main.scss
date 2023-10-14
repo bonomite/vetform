@@ -1,5 +1,13 @@
 @use 'abstract';
 @use 'base';
+@import '_breakpoints.scss';
+@import '_include-media.scss';
+
+// variables
+$maxWidth: 1440px;
+$contentWidth: 1200px;
+$thinContentWidth: 768px;
+$sectionPadding: 1.25rem;
 
 body {
     padding: 0;
@@ -7,7 +15,22 @@ body {
 }
 
 section {
-    padding: 0 1rem;
+    width: 100%;
+    max-width: $contentWidth;
+    padding: 0.75rem $sectionPadding;
+    margin: auto;
+    @include media('<lg') {
+        width: 100%;
+    }
+    &.max-width {
+        max-width: $maxWidth;
+    }
+    &.thin-width {
+        max-width: $thinContentWidth;
+    }
+    &.full-width {
+        max-width: 100%;
+    }
 }
 
 .number-inc-dec {

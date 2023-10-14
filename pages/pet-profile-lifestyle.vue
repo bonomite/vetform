@@ -250,7 +250,6 @@ console.log('petProfileData', petProfileData)
                 :invalid="v$.food.$error && v$.food.$invalid"
                 @update="updateFoodEntry($event, entry.id)"
                 @remove="removeFoodEntry(entry.id)"
-                class="active"
               />
               <!-- <FoodEntry
                 v-for="(entry, index) of formData.food"

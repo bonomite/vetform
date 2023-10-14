@@ -1,10 +1,11 @@
 html {
 	font-size: 100%;
+	//overscroll-behavior: none;
 }
 body {
 	font-family: var(--font-family);
 	font-size: clamp(0.9375rem, 0.8523rem + 0.2727vw, 1.125rem);
-	line-height: 1.75;
+	//line-height: 1.75;
 }
 
 .question-text {

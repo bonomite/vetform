@@ -63,37 +63,41 @@ watch(
 )
 </script>
 <template>
-  <h1>Client Profile</h1>
+  <section>
+    <h1>Client Profile</h1>
 
-  <form novalidate @submit.prevent="submit" class="flex flex-column gap-2">
-    <div class="flex flex-column gap-2">
-      <label for="first_name">First Name</label>
-      <InputText
-        label="First Name"
-        v-model="formData.first_name"
-        :class="{ 'p-invalid': v$.first_name.$error && v$.first_name.$invalid }"
-      ></InputText>
-      <Error :errArr="v$.first_name.$errors" />
-    </div>
-    <div class="flex flex-column gap-2">
-      <label for="last_name">Last Name</label>
-      <InputText
-        v-model="formData.last_name"
-        :class="{ 'p-invalid': v$.last_name.$error && v$.last_name.$invalid }"
-      ></InputText>
-      <Error :errArr="v$.last_name.$errors" />
-    </div>
-    <div class="flex flex-column gap-2">
-      <label for="email">Email</label>
-      <InputText
-        label="Email"
-        v-model="formData.email"
-        :class="{ 'p-invalid': v$.email.$error && v$.email.$invalid }"
-      ></InputText>
-      <Error :errArr="v$.email.$errors" />
-    </div>
-    <div>
-      <Button type="submit" label="Save Profile" />
-    </div>
-  </form>
+    <form novalidate @submit.prevent="submit" class="flex flex-column gap-2">
+      <div class="flex flex-column gap-2">
+        <label for="first_name">First Name</label>
+        <InputText
+          label="First Name"
+          v-model="formData.first_name"
+          :class="{
+            'p-invalid': v$.first_name.$error && v$.first_name.$invalid,
+          }"
+        ></InputText>
+        <Error :errArr="v$.first_name.$errors" />
+      </div>
+      <div class="flex flex-column gap-2">
+        <label for="last_name">Last Name</label>
+        <InputText
+          v-model="formData.last_name"
+          :class="{ 'p-invalid': v$.last_name.$error && v$.last_name.$invalid }"
+        ></InputText>
+        <Error :errArr="v$.last_name.$errors" />
+      </div>
+      <div class="flex flex-column gap-2">
+        <label for="email">Email</label>
+        <InputText
+          label="Email"
+          v-model="formData.email"
+          :class="{ 'p-invalid': v$.email.$error && v$.email.$invalid }"
+        ></InputText>
+        <Error :errArr="v$.email.$errors" />
+      </div>
+      <div>
+        <Button type="submit" label="Save Profile" />
+      </div>
+    </form>
+  </section>
 </template>

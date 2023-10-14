@@ -64,45 +64,47 @@ async function verify() {
 }
 </script>
 <template>
-  <h1>Welcome to VCA Animal Hospital</h1>
-  <div v-if="!isSmsSent">
-    <h2>Let's sign in with your phone number</h2>
-    <div class="flex flex-column">
-      <label for="phone">Phone</label>
-      <InputMask
-        v-model="formData.phone"
-        date="phone"
-        mask="(999) 999-9999"
-        placeholder="(999) 999-9999"
-        @keydown="(e) => (e.key === 'Enter' ? phoneAuth() : null)"
-        autofocus
-      />
-      <error :errArr="v$.phone.$errors" />
+  <section>
+    <h1>Welcome to { NAME } Animal Hospital</h1>
+    <div v-if="!isSmsSent">
+      <h2>Let's sign in with your phone number</h2>
+      <div class="flex flex-column">
+        <label for="phone">Phone</label>
+        <InputMask
+          v-model="formData.phone"
+          date="phone"
+          mask="(999) 999-9999"
+          placeholder="(999) 999-9999"
+          @keydown="(e) => (e.key === 'Enter' ? phoneAuth() : null)"
+          autofocus
+        />
+        <error :errArr="v$.phone.$errors" />
 
-      <Button label="Continue" @click="phoneAuth" />
+        <Button label="Continue" @click="phoneAuth" />
+      </div>
     </div>
-  </div>
-  <div v-else>
-    <div class="flex flex-column">
-      <label for="phone"
-        >Enter your verification code sent to your phone number</label
-      >
-      <InputText
-        v-model="verifyCode"
-        autofocus
-        @keydown="(e) => (e.key === 'Enter' ? verify() : null)"
-      />
-      <Button label="Verify" @click="verify" />
-      <Button link label="Resend Code" @click="phoneAuth" />
-      <Button
-        link
-        label="Use a different phone number"
-        @click="
-          () => {
-            isSmsSent = !isSmsSent
-          }
-        "
-      />
+    <div v-else>
+      <div class="flex flex-column">
+        <label for="phone"
+          >Enter your verification code sent to your phone number</label
+        >
+        <InputText
+          v-model="verifyCode"
+          autofocus
+          @keydown="(e) => (e.key === 'Enter' ? verify() : null)"
+        />
+        <Button label="Verify" @click="verify" />
+        <Button link label="Resend Code" @click="phoneAuth" />
+        <Button
+          link
+          label="Use a different phone number"
+          @click="
+            () => {
+              isSmsSent = !isSmsSent
+            }
+          "
+        />
+      </div>
     </div>
-  </div>
+  </section>
 </template>
