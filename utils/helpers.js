@@ -4,7 +4,7 @@ import { petOptions } from '~/composables/globals.ts'
 
 export const getName = computed(() => {
     const petProfileData = ref(usePetProfileData().value)
-    return petProfileData.value.name ? petProfileData.value.name : 'your pet'
+    return petProfileData.value.name ?? 'your pet'
 })
 
 export const isExotic = () => {
@@ -23,4 +23,11 @@ export const scrollToFirstValidationError = async () => {
         block: 'center',
         inline: 'start',
     })
+}
+
+export const isLast = (index, arr) => {
+    if (index === arr.length - 1) {
+        return true
+    }
+    return false
 }

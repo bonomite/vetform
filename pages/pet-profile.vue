@@ -3,14 +3,7 @@ import { useVuelidate } from '@vuelidate/core'
 import { helpers, required } from '@vuelidate/validators'
 import { savePetFormData } from '~/utils/dataManagement'
 import { useCurrentPetProfileStep } from '~/composables/states.ts'
-import { usePetProfileData } from '~/composables/states.ts'
-import {
-  petOptions,
-  petProfileSteps,
-  sexOptions,
-  yesNoOptions,
-  trackingOptions,
-} from '~/composables/globals.ts'
+import { petOptions, petProfileSteps, sexOptions, yesNoOptions, trackingOptions } from '~/composables/globals.ts'
 
 definePageMeta({
   layout: 'pet',
@@ -18,7 +11,6 @@ definePageMeta({
 
 const currentPetProfileStep = useCurrentPetProfileStep()
 const tempPetsCount = ref(0)
-const petProfileData = usePetProfileData()
 
 onBeforeMount(async () => {
   currentPetProfileStep.value = 0
@@ -63,11 +55,7 @@ onMounted(() => {
     formData.dob = new Date(localFormData.dob) ?? null
     formData.tracking = localFormData.tracking ?? null
   }
-
-  console.log('petProfileData NAME = ', petProfileData.value)
 })
-
-watch(petProfileData, () => {})
 
 const v$ = useVuelidate(rules, formData)
 
@@ -91,9 +79,7 @@ const submit = async () => {
 <template>
   <div class="pet-profile">
     <section class="question your-pet">
-      <h1>
-        Now, tell us about your {{ tempPetsCount > 1 ? 'other' : '' }} pet...
-      </h1>
+      <h1>Now, tell us about your {{ tempPetsCount > 1 ? 'other' : '' }} pet...</h1>
 
       <form novalidate @submit.prevent="submit">
         <div class="grid row-gap-4 my-gutter">
@@ -154,9 +140,7 @@ const submit = async () => {
           <!-- Spayed / Neutered -->
           <div class="col-12 sm:col-6">
             <div class="flex flex-column gap-2">
-              <label class="question-text" for="spayed_neutered"
-                >Spayed / neutered</label
-              >
+              <label class="question-text" for="spayed_neutered">Spayed / neutered</label>
               <div class="card flex">
                 <SelectButton
                   label="spayed_neutered"
@@ -164,8 +148,7 @@ const submit = async () => {
                   :options="yesNoOptions"
                   aria-labelledby="basic"
                   :class="{
-                    'p-invalid':
-                      v$.spayed_neutered.$error && v$.spayed_neutered.$invalid,
+                    'p-invalid': v$.spayed_neutered.$error && v$.spayed_neutered.$invalid,
                   }"
                 />
               </div>
@@ -193,9 +176,7 @@ const submit = async () => {
           <!-- Microchipped / tattooed -->
           <div class="col-12 sm:col-6">
             <div class="flex flex-column gap-2">
-              <label class="question-text" for="microchipped_tattooed"
-                >Microchipped / tattooed</label
-              >
+              <label class="question-text" for="microchipped_tattooed">Microchipped / tattooed</label>
               <div class="card flex">
                 <SelectButton
                   label="microchipped_tattooed"
