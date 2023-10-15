@@ -87,6 +87,8 @@ const submit = async () => {
 
     // navigate to next step
     navigateTo(petProfileSteps[2].route)
+  } else {
+    scrollToFirstValidationError()
   }
 }
 

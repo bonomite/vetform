@@ -50,6 +50,8 @@ async function submit() {
       toast.add(toastMessage('profile_saved'))
       navigateTo('/pet-profile')
     }
+  } else {
+    scrollToFirstValidationError()
   }
 }
 

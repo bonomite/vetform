@@ -14,3 +14,13 @@ export const isExotic = () => {
             .exotic
         : false
 }
+
+export const scrollToFirstValidationError = async () => {
+    await nextTick()
+    const elm = document.getElementsByClassName('p-error')[0]
+    elm.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+        inline: 'start',
+    })
+}
