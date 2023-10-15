@@ -270,17 +270,18 @@ console.log('petProfileData', petProfileData)
                 @remove="removeFoodEntry(entry.id)"
                 :invalid="v$.food.$error && v$.food.$invalid"
               /> -->
-              <!-- <pre>{{ formData.food }}</pre> -->
-              <pre>{{ v$.food.$each.$response.$data[0] }}</pre>
-              <div v-for="(item, index) in formData.food" :key="index">
-                <span v-if="v$.food.$each.$response.$data[index].$error"
-                  >Product is required.</span
+
+              <div
+                v-for="(item, index) in formData.food"
+                :key="index"
+                class="-mt-1"
+              >
+                <small
+                  class="p-error"
+                  v-if="v$.food.$each.$response.$data[index].product.$error"
+                  >Product name is required.</small
                 >
               </div>
-              <!--  <span v-if="v$.food.$anyDirty"> Product is required </span> -->
-              <!-- <div v-for="(entry, index) of formData.food" :key="index">
-              </div> -->
-              <!-- <Error :errArr="v$.food.$anyDirty" /> -->
 
               <div class="flex gap-2 align-items-center">
                 <Button rounded icon="pi pi-plus" @click="addFoodEntry" />
