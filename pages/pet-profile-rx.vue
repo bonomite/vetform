@@ -1,4 +1,6 @@
 <script setup>
+import { useVuelidate } from '@vuelidate/core'
+import { helpers, required } from '@vuelidate/validators'
 import {
   usePetProfileData,
   useCurrentPetProfileStep,

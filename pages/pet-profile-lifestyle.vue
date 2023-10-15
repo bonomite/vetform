@@ -67,7 +67,9 @@ const rules = computed(() => {
       required: helpers.withMessage('Answer is required', required),
     },
     food: {
-      required: helpers.withMessage('At leaset 1 food is required', required),
+      $each: helpers.forEach({
+        product: { required },
+      }),
     },
     grain_free: {
       required: helpers.withMessage('Answer is required', required),
@@ -268,7 +270,18 @@ console.log('petProfileData', petProfileData)
                 @remove="removeFoodEntry(entry.id)"
                 :invalid="v$.food.$error && v$.food.$invalid"
               /> -->
-              <Error :errArr="v$.food.$errors" />
+              <!-- <pre>{{ formData.food }}</pre> -->
+              <pre>{{ v$.food.$each.$response.$data[0] }}</pre>
+              <div v-for="(item, index) in formData.food" :key="index">
+                <span v-if="v$.food.$each.$response.$data[index].$error"
+                  >Product is required.</span
+                >
+              </div>
+              <!--  <span v-if="v$.food.$anyDirty"> Product is required </span> -->
+              <!-- <div v-for="(entry, index) of formData.food" :key="index">
+              </div> -->
+              <!-- <Error :errArr="v$.food.$anyDirty" /> -->
+
               <div class="flex gap-2 align-items-center">
                 <Button rounded icon="pi pi-plus" @click="addFoodEntry" />
                 <p>Add another product</p>
