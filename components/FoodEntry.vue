@@ -28,6 +28,7 @@ const emit = defineEmits(['update', 'remove'])
 const internalProduct = ref(props.product)
 const internalTimes = ref(props.times)
 
+const inputTextRef = ref(null)
 const foodEntryRef = ref(null)
 
 const update = () => {
@@ -48,12 +49,21 @@ const remove = (e) => {
   })
 }
 
+const setFocus = () => {
+  console.log('focus')
+  foodEntryRef.value.getElementsByClassName('p-inputtext')[0].focus()
+}
+
 onMounted(() => {
   if (internalProduct.value) {
     $gsap.set(foodEntryRef.value, { opacity: 1, height: 52 })
   } else {
     $gsap.to(foodEntryRef.value, { opacity: 1, height: 52, duration: 0.25 })
   }
+})
+
+defineExpose({
+  setFocus,
 })
 </script>
 
@@ -81,7 +91,7 @@ onMounted(() => {
         :step="1"
         incrementButtonIcon="pi pi-plus"
         decrementButtonIcon="pi pi-minus"
-        :min="0"
+        :min="1"
         :max="9"
         @update:modelValue="update"
       />

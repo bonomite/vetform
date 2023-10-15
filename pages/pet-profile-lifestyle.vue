@@ -17,6 +17,7 @@ definePageMeta({
 })
 const currentPetProfileStep = useCurrentPetProfileStep()
 const petProfileData = usePetProfileData()
+const foodEntryRef = ref(null)
 
 onBeforeMount(async () => {
   currentPetProfileStep.value = 1
@@ -92,8 +93,11 @@ const submit = async () => {
   }
 }
 
-const addFoodEntry = () => {
+const addFoodEntry = async () => {
   formData.food.push(foodEntryObject())
+  await nextTick()
+  const newEntryIndex = foodEntryRef.value.length - 1
+  foodEntryRef.value[newEntryIndex].setFocus()
 }
 const updateFoodEntry = (dataObj, id) => {
   const thisEntry = formData.food.find((entry) => entry.id === id)
@@ -244,6 +248,7 @@ console.log('petProfileData', petProfileData)
 
               <FoodEntry
                 v-for="(entry, index) of formData.food"
+                ref="foodEntryRef"
                 :product="entry.product"
                 :times="entry.times_a_day"
                 :index="index"
