@@ -8,6 +8,7 @@ definePageMeta({
   layout: 'pet',
 })
 const currentPetProfileStep = useCurrentPetProfileStep()
+const preventativesRef = ref(null)
 
 onBeforeMount(async () => {
   currentPetProfileStep.value = 2
@@ -27,7 +28,7 @@ const submit = async () => {
   navigateTo(petProfileSteps[3].route)
 }
 watch(formData, () => {
-  console.log('formData = ', formData.value)
+  console.log('formData = ', formData.preventatives)
 })
 </script>
 <template>
@@ -40,7 +41,8 @@ watch(formData, () => {
             <label class="question-text col-12">Select all that apply:</label>
             <div
               v-for="(preventative, index) of preventatives"
-              :key="preventative.key"
+              ref="preventativesRef"
+              :key="preventative.label"
               class="col-6 md:col-4 mb-2 md:mb-0"
               :class="[{ 'col-12 sm:col-6': isLast(index, preventatives) }]"
             >
@@ -48,13 +50,16 @@ watch(formData, () => {
                 <div class="flex align-items-center">
                   <Checkbox
                     v-model="formData.preventatives"
-                    :inputId="preventative.key"
+                    :inputId="preventative.label"
                     name="preventative"
                     :value="preventative.label"
                   />
-                  <label :for="preventative.key" class="ml-2 line-height-2">{{ preventative.label }}</label>
-                  <!-- v-if="preventative.date" -->
-                  <label class="flex align-items-center ml-2 line-height-2">
+                  <label :for="preventative.label" class="ml-2 line-height-4">{{ preventative.label }}</label>
+
+                  <label
+                    v-if="formData?.preventatives?.includes(preventative.label)"
+                    class="flex align-items-center ml-2"
+                  >
                     <i class="pi pi-calendar" />
                     <Calendar v-model="preventative.date" touchUI class="preventativeDate" />
                   </label>
@@ -84,7 +89,7 @@ watch(formData, () => {
   .preventativeDate input {
     cursor: pointer;
     //border: none;
-    padding: 0.25rem;
+    padding: 0;
   }
 }
 </style>
