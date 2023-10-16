@@ -1,14 +1,6 @@
 <script setup>
-import {
-  useCurrentPetProfileStep,
-  usePetProfileData,
-} from '~/composables/states.ts'
-import {
-  lifestyles,
-  yesNoOptions,
-  petAquiredFromOptions,
-  foodEntryObject,
-} from '~/composables/globals.ts'
+import { useCurrentPetProfileStep } from '~/composables/states.ts'
+import { lifestyles, yesNoOptions, petAquiredFromOptions, foodEntryObject } from '~/composables/globals.ts'
 import { useVuelidate } from '@vuelidate/core'
 import { email, helpers, minLength, required } from '@vuelidate/validators'
 
@@ -16,19 +8,11 @@ definePageMeta({
   layout: 'pet',
 })
 const currentPetProfileStep = useCurrentPetProfileStep()
-const petProfileData = usePetProfileData()
 const foodEntryRef = ref(null)
 
 onBeforeMount(async () => {
   currentPetProfileStep.value = 1
 })
-
-const lastLifestyle = (index) => {
-  if (index === lifestyles.length - 1) {
-    return true
-  }
-  return false
-}
 
 const formData = reactive({
   lifestyles: null,
@@ -46,8 +30,7 @@ onMounted(() => {
   if (localFormData) {
     formData.lifestyles = localFormData.lifestyles ?? null
     formData.lifestyles_other = localFormData.lifestyles_other ?? null
-    formData.household_less_than_6_months =
-      localFormData.household_less_than_6_months ?? null
+    formData.household_less_than_6_months = localFormData.household_less_than_6_months ?? null
     formData.pet_aquired_from = localFormData.pet_aquired_from ?? null
     formData.describe_housing = localFormData.describe_housing ?? null
     formData.food = localFormData.food ?? [foodEntryObject()]
@@ -67,7 +50,9 @@ const rules = computed(() => {
       required: helpers.withMessage('Answer is required', required),
     },
     food: {
-      required: helpers.withMessage('At leaset 1 food is required', required),
+      $each: helpers.forEach({
+        product: { required },
+      }),
     },
     grain_free: {
       required: helpers.withMessage('Answer is required', required),
@@ -107,12 +92,6 @@ const updateFoodEntry = (dataObj, id) => {
 const removeFoodEntry = (id) => {
   formData.food = formData.food.filter((entry) => entry.id !== id)
 }
-
-watch(formData, (newVal) => {
-  console.log('formData', newVal)
-})
-
-console.log('petProfileData', petProfileData)
 </script>
 <template>
   <div class="pet-profile">
@@ -127,7 +106,7 @@ console.log('petProfileData', petProfileData)
               v-for="(lifestyle, index) of lifestyles"
               :key="lifestyle.key"
               class="col-6 md:col-4 mb-2"
-              :class="[{ 'col-12 sm:col-6': lastLifestyle(index) }]"
+              :class="[{ 'col-12 sm:col-6': isLast(index, lifestyles) }]"
             >
               <div class="flex flex-column">
                 <div class="flex align-items-center">
@@ -137,15 +116,10 @@ console.log('petProfileData', petProfileData)
                     name="lifestyle"
                     :value="lifestyle.label"
                   />
-                  <label :for="lifestyle.key" class="ml-2 line-height-2"
-                    >{{ lifestyle.label }}
-                  </label>
+                  <label :for="lifestyle.key" class="ml-2 line-height-2">{{ lifestyle.label }}</label>
                 </div>
                 <InputText
-                  v-if="
-                    lastLifestyle(index) &&
-                    formData.lifestyles?.includes('Other')
-                  "
+                  v-if="isLast(index, lifestyles) && formData.lifestyles?.includes('Other')"
                   v-model="formData.lifestyles_other"
                   type="text"
                   placeholder="Other lifestyle"
@@ -159,10 +133,7 @@ console.log('petProfileData', petProfileData)
           <div class="col-12 sm:col-6">
             <div class="flex flex-column gap-2">
               <ClientOnly>
-                <label class="question-text"
-                  >Has {{ getName }} been in your household less than 6
-                  months?</label
-                >
+                <label class="question-text">Has {{ getName }} been in your household less than 6 months?</label>
               </ClientOnly>
               <div class="flex">
                 <SelectButton
@@ -171,9 +142,7 @@ console.log('petProfileData', petProfileData)
                   :options="yesNoOptions"
                   aria-labelledby="basic"
                   :class="{
-                    'p-invalid':
-                      v$.household_less_than_6_months.$error &&
-                      v$.household_less_than_6_months.$invalid,
+                    'p-invalid': v$.household_less_than_6_months.$error && v$.household_less_than_6_months.$invalid,
                   }"
                 />
               </div>
@@ -184,31 +153,13 @@ console.log('petProfileData', petProfileData)
           <!-- Aquired -->
           <!-- IF EXOTIC  or < 6 MONTHS -->
           <ClientOnly>
-            <div
-              class="col-12 sm:col-6"
-              v-if="
-                formData.household_less_than_6_months === 'Yes' || isExotic()
-              "
-            >
+            <div class="col-12 sm:col-6" v-if="formData.household_less_than_6_months === 'Yes' || isExotic()">
               <div class="flex flex-column gap-2">
-                <label class="question-text"
-                  >Where did you aquire {{ getName }}?</label
-                >
+                <label class="question-text">Where did you aquire {{ getName }}?</label>
                 <div class="grid">
-                  <div
-                    v-for="option in petAquiredFromOptions"
-                    :key="option"
-                    class="flex align-items-center col-6"
-                  >
-                    <RadioButton
-                      v-model="formData.pet_aquired_from"
-                      :inputId="option"
-                      name="pizza"
-                      :value="option"
-                    />
-                    <label :for="option" class="ml-2 line-height-2">{{
-                      option
-                    }}</label>
+                  <div v-for="option in petAquiredFromOptions" :key="option" class="flex align-items-center col-6">
+                    <RadioButton v-model="formData.pet_aquired_from" :inputId="option" name="pizza" :value="option" />
+                    <label :for="option" class="ml-2 line-height-2">{{ option }}</label>
                   </div>
                   <Error :errArr="v$.pet_aquired_from.$errors" />
                 </div>
@@ -221,17 +172,15 @@ console.log('petProfileData', petProfileData)
           <ClientOnly>
             <div v-if="isExotic()" class="col-12 sm:col-6">
               <div class="flex flex-column gap-2">
-                <label class="question-text" for="pet_name"
-                  >Describe housing/enclosure (include substrate/litter)</label
-                >
+                <label class="question-text" for="pet_name">
+                  Describe housing/enclosure (include substrate/litter)
+                </label>
                 <Textarea
                   v-model="formData.describe_housing"
                   rows="4"
                   cols="30"
                   :class="{
-                    'p-invalid':
-                      v$.describe_housing.$error &&
-                      v$.describe_housing.$invalid,
+                    'p-invalid': v$.describe_housing.$error && v$.describe_housing.$invalid,
                   }"
                 />
                 <Error :errArr="v$.describe_housing.$errors" />
@@ -242,9 +191,7 @@ console.log('petProfileData', petProfileData)
           <!-- food -->
           <div class="col-12 md:col-6">
             <div class="flex flex-column gap-2">
-              <label class="question-text">
-                What are the foods and snacks you give?
-              </label>
+              <label class="question-text">What are the foods and snacks you give?</label>
 
               <FoodEntry
                 v-for="(entry, index) of formData.food"
@@ -268,7 +215,13 @@ console.log('petProfileData', petProfileData)
                 @remove="removeFoodEntry(entry.id)"
                 :invalid="v$.food.$error && v$.food.$invalid"
               /> -->
-              <Error :errArr="v$.food.$errors" />
+
+              <div v-for="(item, index) in formData.food" :key="index" class="-mt-1">
+                <small class="p-error" v-if="v$.food.$each.$response.$data[index].product.$error">
+                  Product name is required.
+                </small>
+              </div>
+
               <div class="flex gap-2 align-items-center">
                 <Button rounded icon="pi pi-plus" @click="addFoodEntry" />
                 <p>Add another product</p>
@@ -279,9 +232,7 @@ console.log('petProfileData', petProfileData)
           <!-- grain free -->
           <div class="col-12 sm:col-6">
             <div class="flex flex-column gap-2">
-              <label class="question-text"
-                >Are any of these foods raw or grain free?</label
-              >
+              <label class="question-text">Are any of these foods raw or grain free?</label>
               <div class="flex">
                 <SelectButton
                   label="spayed_neutered"

@@ -24,6 +24,22 @@ export const lifestyles: Array<{}> = [
     { label: 'Doggy play dates' },
     { label: 'Other' },
 ];
+export const preventatives: Array<{}> = [
+    { label: 'Trio' },
+    { label: 'Sentinel' },
+    { label: 'Heartgard' },
+    { label: 'Revolution' },
+    { label: 'Frontline' },
+    { label: 'Bravecto' },
+    { label: 'Nexgard' },
+    { label: 'Credelio' },
+    { label: 'Trifexis' },
+    { label: 'Seresto Collar' },
+    { label: 'Interceptop' },
+    { label: 'Advantage' },
+    { label: 'Advantage Multi' },
+    { label: 'Other' },
+];
 
 export const sexOptions: Array<{}> = ['Male', 'Female']
 export const yesNoOptions: Array<{}> = ['Yes', 'No']
