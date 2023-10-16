@@ -14,8 +14,22 @@ onBeforeMount(async () => {
   currentPetProfileStep.value = 2
 })
 
+const preventativeEntryObject = (label) => ({ id: randomId(), product: label, date: null })
+const preventativesArray = []
+const preventativesTemp = ref(null)
+
+const preventativeChange = (event, label, index) => {
+  console.log('event?.target?.className = ', event?.target?.className)
+  if (event?.target?.includes('p-highlight')) {
+    preventativesArray.splice(index, 1)
+  } else {
+    preventativesArray.push(preventativeEntryObject(label))
+  }
+  console.log('formData.preventatives = ', formData.preventatives)
+}
+
 const formData = reactive({
-  preventatives: null,
+  preventatives: preventativesArray,
   preventatives_other: null,
 })
 
@@ -48,21 +62,23 @@ watch(formData, () => {
             >
               <div class="flex flex-column">
                 <div class="flex align-items-center">
+                  <!-- v-model="formData.preventatives" -->
                   <Checkbox
-                    v-model="formData.preventatives"
+                    v-model="preventativesTemp"
                     :inputId="preventative.label"
                     name="preventative"
                     :value="preventative.label"
+                    @change="preventativeChange($event, preventative.label, index)"
                   />
                   <label :for="preventative.label" class="ml-2 line-height-4">{{ preventative.label }}</label>
 
-                  <label
-                    v-if="formData?.preventatives?.includes(preventative.label)"
+                  <div
+                    v-if="formData?.preventatives[0]?.product?.includes(preventative.label)"
                     class="flex align-items-center ml-2"
                   >
                     <i class="pi pi-calendar" />
-                    <Calendar v-model="preventative.date" touchUI class="preventativeDate" />
-                  </label>
+                    <Calendar v-model="formData.preventativesDate" touchUI class="preventativeDate" />
+                  </div>
                 </div>
                 <InputText
                   v-if="isLast(index, preventatives) && formData.preventatives?.includes('Other')"
