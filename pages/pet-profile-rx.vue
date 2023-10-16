@@ -70,7 +70,6 @@ const submit = async () => {
             >
               <div class="flex flex-column">
                 <div class="flex align-items-start">
-                  <!-- v-model="formData.preventatives" -->
                   <Checkbox
                     v-model="pre.checked"
                     :inputId="pre.product"
@@ -100,14 +99,14 @@ const submit = async () => {
                         </Calendar>
                       </div>
                     </div>
-                    <InputText
-                      v-if="preventatives[index].label === 'Other' && pre.checked"
-                      v-model="pre.other"
-                      type="text"
-                      placeholder="Other Medication or Preventative"
-                      class="mt-2 w-full"
-                    />
                   </div>
+                  <InputText
+                    v-if="preventatives[index].label === 'Other' && pre.checked"
+                    v-model="pre.other"
+                    type="text"
+                    placeholder="Other Medication or Preventative"
+                    class="mt-2 w-full"
+                  />
                 </div>
               </div>
             </div>
@@ -122,7 +121,6 @@ const submit = async () => {
 .pet-profile-rx {
   .pi-calendar {
     color: var(--text-color);
-    cursor: pointer;
   }
   .dateAdministered input {
     cursor: pointer;
