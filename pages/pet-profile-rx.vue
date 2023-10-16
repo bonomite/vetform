@@ -8,30 +8,39 @@ definePageMeta({
   layout: 'pet',
 })
 const currentPetProfileStep = useCurrentPetProfileStep()
-const preventativesRef = ref(null)
 
 onBeforeMount(async () => {
   currentPetProfileStep.value = 2
 })
+const calendarRef = ref([])
+const preventativesArray = ref([])
+const preventativeEntryObject = (label) => ({ product: label, date: null, checked: false, other: null })
 
-const preventativeEntryObject = (label) => ({ id: randomId(), product: label, date: null })
-const preventativesArray = []
-const preventativesTemp = ref(null)
-
-const preventativeChange = (event, label, index) => {
-  console.log('event?.target?.className = ', event?.target?.className)
-  if (event?.target?.includes('p-highlight')) {
-    preventativesArray.splice(index, 1)
-  } else {
-    preventativesArray.push(preventativeEntryObject(label))
-  }
-  console.log('formData.preventatives = ', formData.preventatives)
-}
+// populate the preventatives array
+preventatives.forEach((pre) => {
+  preventativesArray.value.push(preventativeEntryObject(pre.label))
+})
 
 const formData = reactive({
-  preventatives: preventativesArray,
+  preventatives: preventativesArray.value,
   preventatives_other: null,
 })
+
+const handleCheckboxChange = (index) => {
+  if (formData.preventatives[index].checked) {
+    // target the associated Calendar component
+    const calendar = calendarRef.value[index].$el.querySelector('.p-inputtext')
+    // Simulate a click on the calendar
+    calendar.click()
+  }
+}
+
+const handleCalendarClose = (index) => {
+  // If no date is selected, uncheck the checkbox
+  if (!formData.preventatives[index].date) {
+    formData.preventatives[index].checked = false
+  }
+}
 
 const submit = async () => {
   // update global state for pet profile
@@ -41,9 +50,9 @@ const submit = async () => {
   // navigate to next step
   navigateTo(petProfileSteps[3].route)
 }
-watch(formData, () => {
-  console.log('formData = ', formData.preventatives)
-})
+// watch(formData, () => {
+//   console.log('formData = ', formData.preventatives)
+// })
 </script>
 <template>
   <div class="pet-profile-rx">
@@ -54,39 +63,52 @@ watch(formData, () => {
           <div class="grid col-12">
             <label class="question-text col-12">Select all that apply:</label>
             <div
-              v-for="(preventative, index) of preventatives"
-              ref="preventativesRef"
-              :key="preventative.label"
-              class="col-6 md:col-4 mb-2 md:mb-0"
+              v-for="(pre, index) of formData.preventatives"
+              :key="pre.product"
+              class="preventative col-6 md:col-4 mb-2 md:mb-0"
               :class="[{ 'col-12 sm:col-6': isLast(index, preventatives) }]"
             >
               <div class="flex flex-column">
-                <div class="flex align-items-center">
+                <div class="flex align-items-start">
                   <!-- v-model="formData.preventatives" -->
                   <Checkbox
-                    v-model="preventativesTemp"
-                    :inputId="preventative.label"
+                    v-model="pre.checked"
+                    :inputId="pre.product"
                     name="preventative"
-                    :value="preventative.label"
-                    @change="preventativeChange($event, preventative.label, index)"
+                    :value="pre.checked"
+                    :binary="true"
+                    @change="handleCheckboxChange(index)"
                   />
-                  <label :for="preventative.label" class="ml-2 line-height-4">{{ preventative.label }}</label>
+                  <div>
+                    <label :for="pre.product" class="ml-2 line-height-1">{{ pre.product }}</label>
 
-                  <div
-                    v-if="formData?.preventatives[0]?.product?.includes(preventative.label)"
-                    class="flex align-items-center ml-2"
-                  >
-                    <i class="pi pi-calendar" />
-                    <Calendar v-model="formData.preventativesDate" touchUI class="preventativeDate" />
+                    <div v-show="pre.checked">
+                      <div class="flex align-items-center ml-2">
+                        <i class="pi pi-calendar mr-1" />
+                        <Calendar
+                          ref="calendarRef"
+                          v-model="pre.date"
+                          touchUI
+                          class="dateAdministered"
+                          @hide="handleCalendarClose(index)"
+                        >
+                          <template #footer>
+                            <div class="text-center text-xl font-bold py-4 px-3">
+                              When did you last administer this product?
+                            </div>
+                          </template>
+                        </Calendar>
+                      </div>
+                    </div>
+                    <InputText
+                      v-if="preventatives[index].label === 'Other' && pre.checked"
+                      v-model="pre.other"
+                      type="text"
+                      placeholder="Other Medication or Preventative"
+                      class="mt-2 w-full"
+                    />
                   </div>
                 </div>
-                <InputText
-                  v-if="isLast(index, preventatives) && formData.preventatives?.includes('Other')"
-                  v-model="formData.preventatives_other"
-                  type="text"
-                  placeholder="Other lifestyle"
-                  class="mt-2 w-full"
-                />
               </div>
             </div>
           </div>
@@ -102,9 +124,9 @@ watch(formData, () => {
     color: var(--text-color);
     cursor: pointer;
   }
-  .preventativeDate input {
+  .dateAdministered input {
     cursor: pointer;
-    //border: none;
+    border: none;
     padding: 0;
   }
 }
