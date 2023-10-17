@@ -72,4 +72,8 @@ export const randomId = function (length = 6) {
     return Math.random().toString(36).substring(2, length + 2);
 };
 
-export const foodEntryObject = () => ({ id: randomId(), product: '', times_a_day: 1 })
+export const foodEntryObject = () => ({ product: '', times_a_day: 1 })
+
+export const preventativeEntryObject = (label) => ({ product: label, date: null, checked: false, other: null })
+
+export const medsEntryObject = () => ({ product: '', times_a_day: 1, dose: '' })

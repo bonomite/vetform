@@ -28,7 +28,6 @@ const emit = defineEmits(['update', 'remove'])
 const internalProduct = ref(props.product)
 const internalTimes = ref(props.times)
 
-const inputTextRef = ref(null)
 const foodEntryRef = ref(null)
 
 const update = () => {
@@ -68,10 +67,7 @@ defineExpose({
 </script>
 
 <template>
-  <div
-    ref="foodEntryRef"
-    class="food-entry flex gap-3 align-items-center p-fluid"
-  >
+  <div ref="foodEntryRef" class="food-entry flex gap-3 align-items-center p-fluid">
     <InputText
       v-model="internalProduct"
       type="text"

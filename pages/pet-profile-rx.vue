@@ -2,19 +2,20 @@
 import { useVuelidate } from '@vuelidate/core'
 import { helpers, required } from '@vuelidate/validators'
 import { useCurrentPetProfileStep } from '~/composables/states.ts'
-import { preventatives } from '~/composables/globals.ts'
+import { preventatives, medsEntryObject, preventativeEntryObject } from '~/composables/globals.ts'
 
 definePageMeta({
   layout: 'pet',
 })
 const currentPetProfileStep = useCurrentPetProfileStep()
+const medsEntryRef = ref(null)
 
 onBeforeMount(async () => {
   currentPetProfileStep.value = 2
 })
 const calendarRef = ref([])
 const preventativesArray = ref([])
-const preventativeEntryObject = (label) => ({ product: label, date: null, checked: false, other: null })
+//const preventativeEntryObject = (label) => ({ product: label, date: null, checked: false, other: null })
 
 // populate the preventatives array
 preventatives.forEach((pre) => {
@@ -24,6 +25,22 @@ preventatives.forEach((pre) => {
 const formData = reactive({
   preventatives: preventativesArray.value,
   preventatives_other: null,
+  meds: [],
+})
+
+onMounted(() => {
+  const localFormData = JSON.parse(localStorage.getItem('myPetProfileFormData'))
+
+  if (localFormData) {
+    //format date
+    localFormData.preventatives.forEach((pre) => {
+      pre.date = new Date(pre.date)
+    })
+
+    formData.preventatives = localFormData.preventatives ?? null
+    formData.preventatives_other = localFormData.preventatives_other ?? null
+    formData.meds = localFormData.meds ?? null
+  }
 })
 
 const handleCheckboxChange = (index) => {
@@ -43,6 +60,9 @@ const handleCalendarClose = (index) => {
 }
 
 const submit = async () => {
+  //remove all unchecked preventatives
+  //formData.preventatives = formData.preventatives.filter((pre) => pre.checked)
+
   // update global state for pet profile
   // update browser local storage for pet profile
   savePetFormData(formData)
@@ -50,6 +70,23 @@ const submit = async () => {
   // navigate to next step
   navigateTo(petProfileSteps[3].route)
 }
+
+const addMedsEntry = async () => {
+  formData.meds.push(medsEntryObject())
+  await nextTick()
+  const newEntryIndex = medsEntryRef.value.length - 1
+  medsEntryRef.value[newEntryIndex].setFocus()
+}
+const updateMedsEntry = (dataObj, id) => {
+  const thisEntry = formData.meds.find((entry) => entry.id === id)
+  thisEntry.product = dataObj.product
+  thisEntry.times_a_day = dataObj.times_a_day
+  thisEntry.dose = dataObj.dose
+}
+const removeMedsEntry = (id) => {
+  formData.meds = formData.meds.filter((entry) => entry.id !== id)
+}
+
 // watch(formData, () => {
 //   console.log('formData = ', formData.preventatives)
 // })
@@ -61,7 +98,7 @@ const submit = async () => {
       <form novalidate @submit.prevent="submit">
         <div class="grid row-gap-4 my-gutter">
           <div class="grid col-12">
-            <label class="question-text col-12">Select all that apply:</label>
+            <label class="question-text col-12">Preventatives (flea, tick & heartworm):</label>
             <div
               v-for="(pre, index) of formData.preventatives"
               :key="pre.product"
@@ -111,7 +148,39 @@ const submit = async () => {
               </div>
             </div>
           </div>
+
+          <!-- medications vitamins -->
+          <div class="col-12">
+            <div class="flex flex-column gap-2">
+              <label class="question-text">What are the medications, vitamins and supplements you give?</label>
+
+              <MedsEntry
+                v-for="(entry, index) of formData.meds"
+                ref="medsEntryRef"
+                :product="entry.product"
+                :times="entry.times_a_day"
+                :dose="entry.dose"
+                :index="index"
+                :totalLength="formData.meds.length"
+                :key="`product-${entry.id}`"
+                @update="updateMedsEntry($event, entry.id)"
+                @remove="removeMedsEntry(entry.id)"
+              />
+
+              <!-- <div v-for="(item, index) in formData.meds" :key="index" class="-mt-1">
+                <small class="p-error" v-if="v$.meds.$each.$response.$data[index].product.$error">
+                  Product name is required.
+                </small>
+              </div> -->
+
+              <div class="flex gap-2 align-items-center">
+                <Button rounded icon="pi pi-plus" @click="addMedsEntry" />
+                <p>Add medication/supplement</p>
+              </div>
+            </div>
+          </div>
         </div>
+        <Button type="submit" label="Continue" />
       </form>
     </section>
   </div>
