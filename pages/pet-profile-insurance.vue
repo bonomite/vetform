@@ -99,13 +99,13 @@ const submit = async () => {
                     v-model="formData.provider"
                     :options="insuranceProviders"
                     optionLabel="label"
+                    filter
                     placeholder="Select provider"
                     class="w-full"
                   />
                 </div>
               </div>
             </div>
-
             <!-- other_hospitals -->
             <div class="col-12 sm:col-6">
               <div class="flex flex-column gap-2">
@@ -127,7 +127,7 @@ const submit = async () => {
               </div>
             </div>
 
-            <div class="col-12 sm:col-6">
+            <div v-if="formData.other_hospitals === 'Yes'" class="col-12 sm:col-6">
               <!-- other_hospital_name -->
               <div class="w-full mb-3">
                 <div class="flex flex-column gap-2">
@@ -149,6 +149,10 @@ const submit = async () => {
                   </div>
                 </div>
               </div>
+              <p>
+                Please arrange to have {{ getName.value }}'s records sent to us at
+                <NuxtLink to="mailto:au1297@vca.com">au1297@vca.com</NuxtLink>
+              </p>
             </div>
           </div>
         </div>
