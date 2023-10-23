@@ -27,7 +27,7 @@ export const usePetProfileData = () => useState('usePetProfileData', () => ({
     grain_free: null,
 }))
 if (process.client) {
-    const localFormData = JSON.parse(localStorage.getItem('myPetProfileFormData'))
+    const localFormData = JSON.parse(localStorage.getItem(localStorageName))
 
     const petProfileData = reactive(usePetProfileData())
 

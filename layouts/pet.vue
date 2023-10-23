@@ -1,5 +1,5 @@
 <script setup>
-import { petProfileSteps } from '~/composables/globals.ts'
+import { petProfileSteps } from '~/utils/globals.ts'
 import { useCurrentPetProfileStep } from '~/composables/states.ts'
 const currentPetProfileStep = useCurrentPetProfileStep()
 //const currentStep = ref(0)
@@ -21,8 +21,7 @@ const isActive = (item) => {
             class: isActive(context.item) && 'p-highlight p-steps-current',
           }),
         }"
-      >
-      </Steps>
+      ></Steps>
     </div>
     <slot />
   </div>

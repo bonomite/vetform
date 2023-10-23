@@ -3,7 +3,7 @@ import { useVuelidate } from '@vuelidate/core'
 import { helpers, required } from '@vuelidate/validators'
 import { savePetFormData } from '~/utils/dataManagement'
 import { useCurrentPetProfileStep } from '~/composables/states.ts'
-import { petOptions, petProfileSteps, sexOptions, yesNoOptions, trackingOptions } from '~/composables/globals.ts'
+import { petOptions, petProfileSteps, sexOptions, yesNoOptions, trackingOptions } from '~/utils/globals.ts'
 
 definePageMeta({
   layout: 'pet',
@@ -46,7 +46,7 @@ const formData = reactive({
 })
 
 onMounted(() => {
-  const localFormData = JSON.parse(localStorage.getItem('myPetProfileFormData'))
+  const localFormData = JSON.parse(localStorage.getItem(localStorageName))
   if (localFormData) {
     formData.name = localFormData.name ?? null
     formData.type = localFormData.type ?? null

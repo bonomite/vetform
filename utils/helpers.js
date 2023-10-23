@@ -1,19 +1,20 @@
 import { ref } from 'vue'
 import { usePetProfileData } from '~/composables/states.ts'
-import { petOptions } from '~/composables/globals.ts'
+import { petOptions } from '~/utils/globals.ts'
 
 export const getName = computed(() => {
     const petProfileData = ref(usePetProfileData().value)
     return petProfileData.value.name ?? 'your pet'
+
 })
 
-export const isExotic = () => {
+export const isExotic = computed(() => {
     const petProfileData = ref(usePetProfileData().value)
     return petProfileData.value.type
         ? petOptions.find((item) => item.label === petProfileData.value.type.label)
             .exotic
         : false
-}
+})
 
 export const scrollToFirstValidationError = async () => {
     await nextTick()

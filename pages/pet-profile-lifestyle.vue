@@ -1,6 +1,6 @@
 <script setup>
 import { useCurrentPetProfileStep } from '~/composables/states.ts'
-import { lifestyles, yesNoOptions, petAquiredFromOptions, foodEntryObject } from '~/composables/globals.ts'
+import { lifestyles, yesNoOptions, petAquiredFromOptions, foodEntryObject } from '~/utils/globals.ts'
 import { useVuelidate } from '@vuelidate/core'
 import { email, helpers, minLength, required } from '@vuelidate/validators'
 
@@ -25,7 +25,7 @@ const formData = reactive({
 })
 
 onMounted(() => {
-  const localFormData = JSON.parse(localStorage.getItem('myPetProfileFormData'))
+  const localFormData = JSON.parse(localStorage.getItem(localStorageName))
 
   if (localFormData) {
     formData.lifestyles = localFormData.lifestyles ?? null
@@ -132,9 +132,8 @@ const removeFoodEntry = (id) => {
           <!-- household <6 months -->
           <div class="col-12 sm:col-6">
             <div class="flex flex-column gap-2">
-              <ClientOnly>
-                <label class="question-text">Has {{ getName }} been in your household less than 6 months?</label>
-              </ClientOnly>
+              <label class="question-text">Has {{ getName.value }} been in your household less than 6 months?</label>
+
               <div class="flex">
                 <SelectButton
                   label="spayed_neutered"
@@ -152,41 +151,37 @@ const removeFoodEntry = (id) => {
 
           <!-- Aquired -->
           <!-- IF EXOTIC  or < 6 MONTHS -->
-          <ClientOnly>
-            <div class="col-12 sm:col-6" v-if="formData.household_less_than_6_months === 'Yes' || isExotic()">
-              <div class="flex flex-column gap-2">
-                <label class="question-text">Where did you aquire {{ getName }}?</label>
-                <div class="grid">
-                  <div v-for="option in petAquiredFromOptions" :key="option" class="flex align-items-center col-6">
-                    <RadioButton v-model="formData.pet_aquired_from" :inputId="option" name="pizza" :value="option" />
-                    <label :for="option" class="ml-2 line-height-2">{{ option }}</label>
-                  </div>
-                  <Error :errArr="v$.pet_aquired_from.$errors" />
+
+          <div class="col-12 sm:col-6" v-if="formData.household_less_than_6_months === 'Yes' || isExotic.value">
+            <div class="flex flex-column gap-2">
+              <label class="question-text">Where did you aquire {{ getName.value }}?</label>
+              <div class="grid">
+                <div v-for="option in petAquiredFromOptions" :key="option" class="flex align-items-center col-6">
+                  <RadioButton v-model="formData.pet_aquired_from" :inputId="option" name="pizza" :value="option" />
+                  <label :for="option" class="ml-2 line-height-2">{{ option }}</label>
                 </div>
+                <Error :errArr="v$.pet_aquired_from.$errors" />
               </div>
             </div>
-          </ClientOnly>
+          </div>
 
           <!-- IF EXOTIC  -->
           <!-- Describe housing/enclosure -->
-          <ClientOnly>
-            <div v-if="isExotic()" class="col-12 sm:col-6">
-              <div class="flex flex-column gap-2">
-                <label class="question-text" for="pet_name">
-                  Describe housing/enclosure (include substrate/litter)
-                </label>
-                <Textarea
-                  v-model="formData.describe_housing"
-                  rows="4"
-                  cols="30"
-                  :class="{
-                    'p-invalid': v$.describe_housing.$error && v$.describe_housing.$invalid,
-                  }"
-                />
-                <Error :errArr="v$.describe_housing.$errors" />
-              </div>
+
+          <div v-if="isExotic.value" class="col-12 sm:col-6">
+            <div class="flex flex-column gap-2">
+              <label class="question-text" for="pet_name">Describe housing/enclosure (include substrate/litter)</label>
+              <Textarea
+                v-model="formData.describe_housing"
+                rows="4"
+                cols="30"
+                :class="{
+                  'p-invalid': v$.describe_housing.$error && v$.describe_housing.$invalid,
+                }"
+              />
+              <Error :errArr="v$.describe_housing.$errors" />
             </div>
-          </ClientOnly>
+          </div>
 
           <!-- food -->
           <div class="col-12 md:col-6">

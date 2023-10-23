@@ -1,3 +1,5 @@
+export const localStorageName: String = 'myPetProfileFormData'
+
 export const petOptions: Array<{}> = [
     { label: 'Dog', exotic: false },
     { label: 'Cat', exotic: false },
@@ -38,6 +40,33 @@ export const preventatives: Array<{}> = [
     { label: 'Interceptop' },
     { label: 'Advantage' },
     { label: 'Advantage Multi' },
+    { label: 'Other' },
+];
+export const insuranceProviders: Array<{}> = [
+    { label: 'Don\'t know' },
+    { label: 'Trupanion' },
+    { label: 'PetPartners, Inc.' },
+    { label: 'Embrace' },
+    { label: 'Figo' },
+    { label: 'Healthy Paws' },
+    { label: 'Nationwide' },
+    { label: 'Pets Best' },
+    { label: 'Fetch' },
+    { label: 'PetFirst' },
+    { label: 'Petplan' },
+    { label: 'Nationwide' },
+    { label: 'Pet Assure Corp' },
+    { label: 'Petco' },
+    { label: 'Healthy Paws' },
+    { label: 'TrustedPals' },
+    { label: 'USAA' },
+    { label: 'GEICO' },
+    { label: 'Progressive' },
+    { label: 'Wagmo' },
+    { label: 'MetLife' },
+    { label: 'Chewy' },
+    { label: 'Banfield' },
+    { label: 'Hartville Group' },
     { label: 'Other' },
 ];
 
