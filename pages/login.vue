@@ -25,11 +25,11 @@ async function phoneAuth() {
       phone: convertPhoneToE164(formData.phone),
     })
 
-    console.log('user', user)
+    //console.log('user', user)
 
     if (error) {
       // Error with Supabase
-      console.log('error', error)
+      //console.log('error', error)
       toast.add(toastMessage('database_error'))
     } else {
       // if no error show the verify code input
@@ -58,8 +58,8 @@ async function verify() {
       navigateTo('/client-profile')
       // New user
     }
-    console.log(session)
-    console.log(currentUser)
+    //console.log(session)
+    //console.log(currentUser)
   }
 }
 </script>
@@ -85,14 +85,8 @@ async function verify() {
     </div>
     <div v-else>
       <div class="flex flex-column">
-        <label for="phone"
-          >Enter your verification code sent to your phone number</label
-        >
-        <InputText
-          v-model="verifyCode"
-          autofocus
-          @keydown="(e) => (e.key === 'Enter' ? verify() : null)"
-        />
+        <label for="phone">Enter your verification code sent to your phone number</label>
+        <InputText v-model="verifyCode" autofocus @keydown="(e) => (e.key === 'Enter' ? verify() : null)" />
         <Button label="Verify" @click="verify" />
         <Button link label="Resend Code" @click="phoneAuth" />
         <Button

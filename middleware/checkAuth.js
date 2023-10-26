@@ -40,7 +40,7 @@ export default defineNuxtRouteMiddleware(async () => {
 
     // check local storage for the auth token
     if (process.client) {
-        console.log('user', user)
+        //console.log('user', user)
         // check supabase session for logged in user
         if (user?.data?.session?.user) {
             currentUser.value = user?.data?.session?.user

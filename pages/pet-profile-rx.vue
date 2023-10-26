@@ -2,7 +2,6 @@
 import { useVuelidate } from '@vuelidate/core'
 import { helpers, required } from '@vuelidate/validators'
 import { useCurrentPetProfileStep } from '~/composables/states.ts'
-import { preventatives, medsEntryObject, preventativeEntryObject } from '~/utils/globals.ts'
 
 definePageMeta({
   layout: 'pet',
@@ -15,11 +14,10 @@ onBeforeMount(async () => {
 })
 const calendarRef = ref([])
 const preventativesArray = ref([])
-//const preventativeEntryObject = (label) => ({ product: label, date: null, checked: false, other: null })
 
 // populate the preventatives array
-preventatives.forEach((pre) => {
-  preventativesArray.value.push(preventativeEntryObject(pre.label))
+PREVENTATIVES.forEach((pre) => {
+  preventativesArray.value.push(PREVENTATIVE_ENTRY_OBJECT(pre.label))
 })
 
 const formData = reactive({
@@ -29,15 +27,18 @@ const formData = reactive({
 })
 
 onMounted(() => {
-  const localFormData = JSON.parse(localStorage.getItem('myPetProfileFormData'))
+  const localFormData = JSON.parse(localStorage.getItem(LOCAL_STORAGE_NAME))
 
   if (localFormData) {
     //format date
-    localFormData.preventatives.forEach((pre) => {
-      pre.date = new Date(pre.date)
-    })
 
-    formData.preventatives = localFormData.preventatives ?? null
+    if (localFormData.preventatives) {
+      localFormData.preventatives.forEach((pre) => {
+        pre.date = new Date(pre.date)
+      })
+    }
+
+    formData.preventatives = localFormData.preventatives ?? preventativesArray.value
     formData.preventatives_other = localFormData.preventatives_other ?? null
     formData.meds = localFormData.meds ?? null
   }
@@ -68,11 +69,11 @@ const submit = async () => {
   savePetFormData(formData)
 
   // navigate to next step
-  navigateTo(petProfileSteps[3].route)
+  navigateTo(PET_PROFILE_STEPS[3].route)
 }
 
 const addMedsEntry = async () => {
-  formData.meds.push(medsEntryObject())
+  formData.meds.push(MEDS_ENTRY_OBJECT())
   await nextTick()
   const newEntryIndex = medsEntryRef.value.length - 1
   medsEntryRef.value[newEntryIndex].setFocus()
@@ -103,7 +104,7 @@ const removeMedsEntry = (id) => {
               v-for="(pre, index) of formData.preventatives"
               :key="pre.product"
               class="preventative col-6 md:col-4 mb-2 md:mb-0"
-              :class="[{ 'col-12 sm:col-6': isLast(index, preventatives) }]"
+              :class="[{ 'col-12 sm:col-6': isLast(index, PREVENTATIVES) }]"
             >
               <div class="flex flex-column">
                 <div class="flex align-items-start">
@@ -138,7 +139,7 @@ const removeMedsEntry = (id) => {
                     </div>
                   </div>
                   <InputText
-                    v-if="preventatives[index].label === 'Other' && pre.checked"
+                    v-if="PREVENTATIVES[index].label === 'Other' && pre.checked"
                     v-model="pre.other"
                     type="text"
                     placeholder="Other Medication or Preventative"

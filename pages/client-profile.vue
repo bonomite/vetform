@@ -33,7 +33,7 @@ async function submit() {
   if (!v$.value.$error) {
     // No validation error, save to Supabase
     currentUser.value = await client.auth.getSession()
-    console.log(currentUser.value)
+    //console.log(currentUser.value)
     const { error } = await client
       .from('profiles')
       .update({

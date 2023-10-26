@@ -1,6 +1,6 @@
 <script setup>
 import { useCurrentPetProfileStep } from '~/composables/states.ts'
-import { insuranceProviders } from '~/utils/globals.ts'
+import { INSURANCEPROVIDERS } from '~/utils/globals.ts'
 import { useVuelidate } from '@vuelidate/core'
 import { email, helpers, minLength, required } from '@vuelidate/validators'
 definePageMeta({
@@ -21,7 +21,7 @@ const formData = reactive({
 })
 
 onMounted(() => {
-  const localFormData = JSON.parse(localStorage.getItem(localStorageName))
+  const localFormData = JSON.parse(localStorage.getItem(LOCAL_STORAGE_NAME))
 
   if (localFormData) {
     formData.has_insurance = localFormData.has_insurance ?? null
@@ -80,7 +80,7 @@ const submit = async () => {
                   <SelectButton
                     label="has_insurance"
                     v-model="formData.has_insurance"
-                    :options="yesNoOptions"
+                    :options="NOYESOPTIONS"
                     aria-labelledby="basic"
                     :class="{
                       'p-invalid': v$.has_insurance.$error && v$.has_insurance.$invalid,
@@ -97,7 +97,7 @@ const submit = async () => {
                 <div class="card flex justify-content-center">
                   <Dropdown
                     v-model="formData.provider"
-                    :options="insuranceProviders"
+                    :options="INSURANCEPROVIDERS"
                     optionLabel="label"
                     filter
                     placeholder="Select provider"
@@ -116,7 +116,7 @@ const submit = async () => {
                   <SelectButton
                     label="other_hospitals"
                     v-model="formData.other_hospitals"
-                    :options="yesNoOptions"
+                    :options="NOYESOPTIONS"
                     aria-labelledby="basic"
                     :class="{
                       'p-invalid': v$.other_hospitals.$error && v$.other_hospitals.$invalid,

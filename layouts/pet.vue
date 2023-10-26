@@ -1,5 +1,4 @@
 <script setup>
-import { petProfileSteps } from '~/utils/globals.ts'
 import { useCurrentPetProfileStep } from '~/composables/states.ts'
 const currentPetProfileStep = useCurrentPetProfileStep()
 //const currentStep = ref(0)
@@ -13,7 +12,7 @@ const isActive = (item) => {
   <div>
     <div class="header">
       <Steps
-        :model="petProfileSteps"
+        :model="PET_PROFILE_STEPS"
         aria-label="Form Steps"
         :readonly="true"
         :pt="{

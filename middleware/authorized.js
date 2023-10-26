@@ -8,7 +8,7 @@ export default defineNuxtRouteMiddleware(async () => {
 
     const client = useSupabaseClient()
     const user = await client.auth.getSession()
-    console.log('user =', user)
+    //console.log('user =', user)
     if (!user?.data?.session?.user) {
         window.location.href = '/'
     }

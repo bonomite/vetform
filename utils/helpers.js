@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 import { usePetProfileData } from '~/composables/states.ts'
-import { petOptions } from '~/utils/globals.ts'
+import { PETOPTIONS } from '~/utils/globals.ts'
 
 export const getName = computed(() => {
     const petProfileData = ref(usePetProfileData().value)
@@ -11,7 +11,7 @@ export const getName = computed(() => {
 export const isExotic = computed(() => {
     const petProfileData = ref(usePetProfileData().value)
     return petProfileData.value.type
-        ? petOptions.find((item) => item.label === petProfileData.value.type.label)
+        ? PETOPTIONS.find((item) => item.label === petProfileData.value.type.label)
             .exotic
         : false
 })
@@ -31,4 +31,8 @@ export const isLast = (index, arr) => {
         return true
     }
     return false
+}
+
+export const randomId = function (length = 6) {
+    return Math.random().toString(36).substring(2, length + 2)
 }

@@ -24,14 +24,14 @@ export default defineNuxtRouteMiddleware(async () => {
         } else if (data) {
             // set the current user profile state
             currentUserProfile.value = data
-            console.log('currentUserProfile.value', currentUserProfile.value)
+            //console.log('currentUserProfile.value', currentUserProfile.value)
 
         }
     }
 
     // check local storage for the auth token
     currentUser.value = user?.data?.session?.user
-    console.log('currentUser.value', currentUser.value)
+    //console.log('currentUser.value', currentUser.value)
     getProfile()
 
 

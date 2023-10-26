@@ -1,6 +1,13 @@
-export const localStorageName: String = 'myPetProfileFormData'
+export const LOCAL_STORAGE_NAME: String = 'myPetProfileFormData'
 
-export const petOptions: Array<{}> = [
+
+export const FOOD_ENTRY_OBJECT = () => ({ id: randomId(), product: '', times_a_day: 1 })
+
+export const PREVENTATIVE_ENTRY_OBJECT = (label) => ({ id: randomId(), product: label, date: null, checked: false, other: null })
+
+export const MEDS_ENTRY_OBJECT = () => ({ id: randomId(), product: '', times_a_day: 1, dose: '' })
+
+export const PETOPTIONS: Array<{}> = [
     { label: 'Dog', exotic: false },
     { label: 'Cat', exotic: false },
     { label: 'Rabbit', exotic: true },
@@ -13,7 +20,7 @@ export const petOptions: Array<{}> = [
     { label: 'Other', exotic: true },
 ];
 
-export const lifestyles: Array<{}> = [
+export const LIFESTYLES: Array<{}> = [
     { label: 'Boarding' },
     { label: 'Grooming' },
     { label: 'Daycare' },
@@ -26,7 +33,7 @@ export const lifestyles: Array<{}> = [
     { label: 'Doggy play dates' },
     { label: 'Other' },
 ];
-export const preventatives: Array<{}> = [
+export const PREVENTATIVES: Array<{}> = [
     { label: 'Trio' },
     { label: 'Sentinel' },
     { label: 'Heartgard' },
@@ -42,7 +49,7 @@ export const preventatives: Array<{}> = [
     { label: 'Advantage Multi' },
     { label: 'Other' },
 ];
-export const insuranceProviders: Array<{}> = [
+export const INSURANCEPROVIDERS: Array<{}> = [
     { label: 'Don\'t know' },
     { label: 'Trupanion' },
     { label: 'PetPartners, Inc.' },
@@ -70,11 +77,11 @@ export const insuranceProviders: Array<{}> = [
     { label: 'Other' },
 ];
 
-export const sexOptions: Array<{}> = ['Male', 'Female']
-export const yesNoOptions: Array<{}> = ['Yes', 'No']
-export const trackingOptions: Array<{}> = ['Microchipped', 'Tattooed']
-export const petAquiredFromOptions: Array<{}> = ['Breeder', 'Shelter / Rescue', 'Store', 'Private home', 'Stray', 'Other']
-export const petProfileSteps: Array<{}> = [
+export const SEXOPTIONS: Array<{}> = ['Male', 'Female']
+export const NOYESOPTIONS: Array<{}> = ['Yes', 'No']
+export const TRACKING_OPTIONS: Array<{}> = ['Microchipped', 'Tattooed']
+export const PET_AQUIRED_FROM_OPTIONS: Array<{}> = ['Breeder', 'Shelter / Rescue', 'Store', 'Private home', 'Stray', 'Other']
+export const PET_PROFILE_STEPS: Array<{}> = [
     {
         index: 0,
         label: 'Basics',
@@ -97,12 +104,28 @@ export const petProfileSteps: Array<{}> = [
     },
 ]
 
-export const randomId = function (length = 6) {
-    return Math.random().toString(36).substring(2, length + 2);
-};
+export const PET_OBJECT_MODEL = {
+    name: null,
+    type: null,
+    sex: null,
+    spayed_neutered: null,
+    dob: null,
+    tracking: null,
+    lifestyles: null,
+    lifestyles_other: null,
+    household_less_than_6_months: null,
+    pet_aquired_from: null,
+    describe_housing: null,
+    food: [FOOD_ENTRY_OBJECT()],
+    grain_free: null,
+    preventatives: null,
+    preventatives_other: null,
+    meds: [],
+    has_insurance: null,
+    provider: null,
+    provider_other: null,
+    other_hospitals: null,
+    other_hospital_name: null,
+    other_hospital_visit: null,
+}
 
-export const foodEntryObject = () => ({ product: '', times_a_day: 1 })
-
-export const preventativeEntryObject = (label) => ({ product: label, date: null, checked: false, other: null })
-
-export const medsEntryObject = () => ({ product: '', times_a_day: 1, dose: '' })
