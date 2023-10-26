@@ -11,27 +11,15 @@ export const useCurrentUserProfile = () => useState('useCurrentUserProfile', () 
 export const useCurrentPetProfileStep = () => useState('useCurrentPetProfileStep', () => 0)
 
 // global state pet-profile data
-export const usePetProfileData = () => useState('usePetProfileData', () => ({
-    name: null,
-    type: null,
-    sex: null,
-    spayed_neutered: null,
-    dob: null,
-    tracking: null,
-    lifestyles: null,
-    lifestyles_other: null,
-    household_less_than_6_months: null,
-    pet_aquired_from: null,
-    describe_housing: null,
-    food: [{ product: '', times_a_day: 1 }],
-    grain_free: null,
-}))
-if (process.client) {
-    const localFormData = JSON.parse(localStorage.getItem('myPetProfileFormData'))
+export const usePetProfileData = () => useState('usePetProfileData', () => PET_OBJECT_MODEL)
 
-    const petProfileData = reactive(usePetProfileData())
+// if (process.client) {
+//     // initially sets the pet profile data from local storage if it exists
+//     const localFormData = JSON.parse(localStorage.getItem(LOCAL_STORAGE_NAME))
 
-    if (localFormData) {
-        petProfileData.value = localFormData
-    }
-}
+//     const petProfileData = reactive(usePetProfileData())
+
+//     if (localFormData) {
+//         petProfileData.value = localFormData
+//     }
+// }

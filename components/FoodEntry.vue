@@ -49,7 +49,7 @@ const remove = (e) => {
 }
 
 const setFocus = () => {
-  console.log('focus')
+  //console.log('focus')
   foodEntryRef.value.getElementsByClassName('p-inputtext')[0].focus()
 }
 

@@ -55,7 +55,7 @@ const remove = (e) => {
 }
 
 const setFocus = () => {
-  console.log('focus')
+  //console.log('focus')
   medsEntryRef.value.getElementsByClassName('p-inputtext')[0].focus()
 }
 

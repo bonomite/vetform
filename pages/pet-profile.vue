@@ -3,7 +3,6 @@ import { useVuelidate } from '@vuelidate/core'
 import { helpers, required } from '@vuelidate/validators'
 import { savePetFormData } from '~/utils/dataManagement'
 import { useCurrentPetProfileStep } from '~/composables/states.ts'
-import { petOptions, petProfileSteps, sexOptions, yesNoOptions, trackingOptions } from '~/composables/globals.ts'
 
 definePageMeta({
   layout: 'pet',
@@ -46,7 +45,7 @@ const formData = reactive({
 })
 
 onMounted(() => {
-  const localFormData = JSON.parse(localStorage.getItem('myPetProfileFormData'))
+  const localFormData = JSON.parse(localStorage.getItem(LOCAL_STORAGE_NAME))
   if (localFormData) {
     formData.name = localFormData.name ?? null
     formData.type = localFormData.type ?? null
@@ -69,7 +68,7 @@ const submit = async () => {
     savePetFormData(formData)
 
     // navigate to next step
-    navigateTo(petProfileSteps[1].route)
+    navigateTo(PET_PROFILE_STEPS[1].route)
   } else {
     scrollToFirstValidationError()
   }
@@ -106,7 +105,7 @@ const submit = async () => {
               <div class="card flex justify-content-center">
                 <Dropdown
                   v-model="formData.type"
-                  :options="petOptions"
+                  :options="PETOPTIONS"
                   optionLabel="label"
                   placeholder="Select"
                   class="w-full"
@@ -126,7 +125,7 @@ const submit = async () => {
               <div class="card flex">
                 <SelectButton
                   v-model="formData.sex"
-                  :options="sexOptions"
+                  :options="SEXOPTIONS"
                   aria-labelledby="basic"
                   :class="{
                     'p-invalid': v$.sex.$error && v$.sex.$invalid,
@@ -145,7 +144,7 @@ const submit = async () => {
                 <SelectButton
                   label="spayed_neutered"
                   v-model="formData.spayed_neutered"
-                  :options="yesNoOptions"
+                  :options="NOYESOPTIONS"
                   aria-labelledby="basic"
                   :class="{
                     'p-invalid': v$.spayed_neutered.$error && v$.spayed_neutered.$invalid,
@@ -181,7 +180,7 @@ const submit = async () => {
                 <SelectButton
                   label="microchipped_tattooed"
                   v-model="formData.tracking"
-                  :options="trackingOptions"
+                  :options="TRACKING_OPTIONS"
                   aria-labelledby="basic"
                   multiple
                 />
