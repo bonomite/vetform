@@ -42,6 +42,7 @@ const formData = reactive({
   spayed_neutered: null,
   dob: null,
   tracking: null,
+  image: null,
 })
 
 onMounted(() => {
@@ -72,6 +73,23 @@ const submit = async () => {
   } else {
     scrollToFirstValidationError()
   }
+}
+
+async function convertBlobToBase64(url) {
+  console.log('url = ', url)
+  // Fetch the blob from the url
+  const response = await fetch(url)
+  const blob = await response.blob()
+
+  // Use a FileReader to read the blob as a data URL
+  const reader = new FileReader()
+  reader.onloadend = () => {
+    // The result is a data URL, extract the base64 string
+    const dataURL = reader.result
+    base64String.value = dataURL.split(',')[1]
+    console.log('base64String.value = ', base64String.value)
+  }
+  //reader.readAsDataURL(blob);
 }
 </script>
 
@@ -188,6 +206,18 @@ const submit = async () => {
               <!-- <Error :errArr="v$.tracking.$errors" /> -->
             </div>
           </div>
+
+          <!-- photo -->
+          <FileUpload
+            name="demo[]"
+            url="/api/upload"
+            :fileLimit="1"
+            :multiple="false"
+            accept="image/*"
+            :maxFileSize="2000000"
+            @select="(e) => convertBlobToBase64(e)"
+          ></FileUpload>
+
           <Button type="submit" label="Continue" />
         </div>
       </form>

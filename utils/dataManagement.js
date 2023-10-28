@@ -2,7 +2,7 @@ import { reactive } from 'vue'
 import { usePetProfileData } from '~/composables/states.ts'
 import { LOCAL_STORAGE_NAME } from '~/utils/globals.ts'
 
-export const savePetFormData = (formData) => {
+export const savePetFormData = (formData, submit = false) => {
     const petProfileData = reactive(usePetProfileData())
     //update global state for pet profile
     petProfileData.value = { ...petProfileData.value, ...formData }

@@ -111,6 +111,7 @@ export const PET_OBJECT_MODEL = {
     spayed_neutered: null,
     dob: null,
     tracking: null,
+    image: null,
     lifestyles: null,
     lifestyles_other: null,
     household_less_than_6_months: null,

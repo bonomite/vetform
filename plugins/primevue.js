@@ -4,6 +4,7 @@ import Button from 'primevue/button'
 import Calendar from 'primevue/calendar'
 import Checkbox from 'primevue/checkbox'
 import Dropdown from 'primevue/dropdown'
+import FileUpload from 'primevue/fileupload'
 import InputText from 'primevue/inputtext'
 import InputMask from 'primevue/inputmask'
 import InputNumber from 'primevue/inputnumber'
@@ -21,6 +22,7 @@ export default defineNuxtPlugin((nuxtApp) => {
 	nuxtApp.vueApp.component('Calendar', Calendar)
 	nuxtApp.vueApp.component('Checkbox', Checkbox)
 	nuxtApp.vueApp.component('Dropdown', Dropdown)
+	nuxtApp.vueApp.component('FileUpload', FileUpload)
 	nuxtApp.vueApp.component('InputText', InputText)
 	nuxtApp.vueApp.component('InputMask', InputMask)
 	nuxtApp.vueApp.component('InputNumber', InputNumber)
