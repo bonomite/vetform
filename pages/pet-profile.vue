@@ -54,6 +54,7 @@ onMounted(() => {
     formData.spayed_neutered = localFormData.spayed_neutered ?? null
     formData.dob = new Date(localFormData.dob) ?? null
     formData.tracking = localFormData.tracking ?? null
+    formData.image = localFormData.image ?? null
   }
 })
 
@@ -75,21 +76,20 @@ const submit = async () => {
   }
 }
 
-async function convertBlobToBase64(url) {
-  console.log('url = ', url)
-  // Fetch the blob from the url
-  const response = await fetch(url)
-  const blob = await response.blob()
+async function convertBlobToBase64(event) {
+  const url = event.files[0].objectURL
+  const blob = await fetch(url).then((r) => r.blob())
 
-  // Use a FileReader to read the blob as a data URL
   const reader = new FileReader()
   reader.onloadend = () => {
-    // The result is a data URL, extract the base64 string
     const dataURL = reader.result
-    base64String.value = dataURL.split(',')[1]
-    console.log('base64String.value = ', base64String.value)
+    formData.image = dataURL.split(',')[1]
   }
-  //reader.readAsDataURL(blob);
+  reader.readAsDataURL(blob)
+}
+
+const imageRemove = () => {
+  formData.image = null
 }
 </script>
 
@@ -208,15 +208,34 @@ async function convertBlobToBase64(url) {
           </div>
 
           <!-- photo -->
-          <FileUpload
-            name="demo[]"
-            url="/api/upload"
-            :fileLimit="1"
-            :multiple="false"
-            accept="image/*"
-            :maxFileSize="2000000"
-            @select="(e) => convertBlobToBase64(e)"
-          ></FileUpload>
+          <div class="col-12">
+            <div class="question-text mb-2" for="image">Photo</div>
+            <FileUpload
+              v-if="!formData.image"
+              mode="basic"
+              :fileLimit="1"
+              :multiple="false"
+              accept="image/jpeg"
+              :maxFileSize="2000000"
+              @select="(e) => convertBlobToBase64(e)"
+            ></FileUpload>
+
+            <div v-else class="thumb-box flex justify-content-between align-items-center">
+              <div class="image-holder">
+                <img
+                  role="presentation"
+                  class="p-fileupload-file-thumbnail"
+                  alt="uploaded pet image"
+                  :src="`data:image/jpeg;base64,${formData.image}`"
+                  width="100"
+                  height="100"
+                  style="object-fit: cover"
+                  data-pc-section="thumbnail"
+                />
+              </div>
+              <Button rounded icon="pi pi-times" @click="imageRemove" />
+            </div>
+          </div>
 
           <Button type="submit" label="Continue" />
         </div>
@@ -231,5 +250,32 @@ async function convertBlobToBase64(url) {
 }
 .pet-profile {
   container-type: inline-size;
+  .p-fileupload-buttonbar {
+    button {
+      display: none !important;
+    }
+  }
+  .thumb-box {
+    background: #eff3f8;
+    padding: 1.25rem;
+    border: 1px solid #dfe7ef;
+    color: #708da9;
+    border-bottom: 0 none;
+    border-top-right-radius: 6px;
+    border-top-left-radius: 6px;
+    gap: 0.5rem;
+    .p-fileupload-file-thumbnail {
+      object-fit: cover;
+      border-radius: 50%;
+    }
+  }
+}
+</style>
+
+<style lang="scss">
+.p-fileupload-buttonbar {
+  button {
+    display: none !important;
+  }
 }
 </style>
