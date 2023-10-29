@@ -216,7 +216,7 @@ const imageRemove = () => {
               :fileLimit="1"
               :multiple="false"
               accept="image/jpeg"
-              :maxFileSize="2000000"
+              :maxFileSize="5000000"
               @select="(e) => convertBlobToBase64(e)"
             ></FileUpload>
 
