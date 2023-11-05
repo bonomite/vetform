@@ -11,4 +11,11 @@ export const savePetFormData = (formData, submit = false) => {
         LOCAL_STORAGE_NAME,
         JSON.stringify(petProfileData.value)
     )
+
+    if (submit) {
+        // submit form to supabase and clear local storage
+        // add users id to "owner_id" column
+        // convert the base64 image to a file and use Supabase storage api to upload and get back a URL we can store in the table
+
+    }
 }

@@ -105,6 +105,7 @@ export const PET_PROFILE_STEPS: Array<{}> = [
 ]
 
 export const PET_OBJECT_MODEL = {
+    owner_id: null,
     name: null,
     type: null,
     sex: null,
