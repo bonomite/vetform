@@ -25,7 +25,7 @@ async function phoneAuth() {
       phone: convertPhoneToE164(formData.phone),
     })
 
-    //console.log('user', user)
+    console.log('user', user)
 
     if (error) {
       // Error with Supabase
