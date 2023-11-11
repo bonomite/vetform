@@ -29,7 +29,7 @@ onMounted(() => {
     formData.provider_other = localFormData.provider_other ?? null
     formData.other_hospitals = localFormData.other_hospitals ?? null
     formData.other_hospital_name = localFormData.other_hospital_name ?? null
-    formData.other_hospital_visit = localFormData.other_hospital_visit ?? null
+    formData.other_hospital_visit = new Date(localFormData.other_hospital_visit) ?? null
   }
 })
 
@@ -53,7 +53,7 @@ const submit = async () => {
 
     // update global state for pet profile
     // update browser local storage for pet profile
-    savePetFormData(formData)
+    savePetFormData(formData, true)
 
     // TODO: if one pet only, go directly to ABOUT TODAY, if they added an additional pet, do to the DASHBAORD
     navigateTo('/dashboard')
