@@ -1,5 +1,7 @@
+const randomId = function (length = 6) {
+    return Math.random().toString(36).substring(2, length + 2)
+}
 export const LOCAL_STORAGE_NAME: String = 'myPetProfileFormData'
-
 
 export const FOOD_ENTRY_OBJECT = () => ({ id: randomId(), product: '', times_a_day: 1 })
 

@@ -6,6 +6,7 @@ import { useCurrentUser } from '~/composables/states.ts'
 const toast = useToast()
 const currentUser = useCurrentUser()
 const client = useSupabaseClient()
+console.log('client', client)
 const rules = computed(() => {
   return {
     phone: validatePhone(),
@@ -21,6 +22,7 @@ const v$ = useVuelidate(rules, formData)
 async function phoneAuth() {
   v$.value.$validate()
   if (!v$.value.$error) {
+    console.log('WHY')
     let { user, error } = await client.auth.signInWithOtp({
       phone: convertPhoneToE164(formData.phone),
     })
