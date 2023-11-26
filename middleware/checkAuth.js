@@ -27,14 +27,12 @@ export default defineNuxtRouteMiddleware(async () => {
             if (data.initialized) {
                 navigateTo('/dashboard')
             } else {
-                if (data.first_name) {
-                    navigateTo('/pet-profile')
-                } else {
+                if (!data.first_name) {
                     navigateTo('/client-profile')
+                } else {
+                    navigateTo('/pet-profile')
                 }
-
             }
-
         }
     }
 
