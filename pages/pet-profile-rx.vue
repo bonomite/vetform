@@ -1,10 +1,10 @@
 <script setup>
-import { useVuelidate } from '@vuelidate/core'
-import { helpers, required } from '@vuelidate/validators'
-import { useCurrentPetProfileStep } from '~/composables/states.ts'
+import { useVuelidate } from "@vuelidate/core"
+import { helpers, required } from "@vuelidate/validators"
+import { useCurrentPetProfileStep } from "~/composables/states.ts"
 
 definePageMeta({
-  layout: 'pet',
+  layout: "pet",
 })
 const currentPetProfileStep = useCurrentPetProfileStep()
 const medsEntryRef = ref(null)
@@ -27,7 +27,7 @@ const formData = reactive({
 })
 
 onMounted(() => {
-  const localFormData = JSON.parse(localStorage.getItem(LOCAL_STORAGE_NAME))
+  const localFormData = getAndSetCurrentPetProfile()
 
   if (localFormData) {
     //format date
@@ -47,7 +47,7 @@ onMounted(() => {
 const handleCheckboxChange = (index) => {
   if (formData.preventatives[index].checked) {
     // target the associated Calendar component
-    const calendar = calendarRef.value[index].$el.querySelector('.p-inputtext')
+    const calendar = calendarRef.value[index].$el.querySelector(".p-inputtext")
     // Simulate a click on the calendar
     calendar.click()
   }
@@ -99,7 +99,9 @@ const removeMedsEntry = (id) => {
       <form novalidate @submit.prevent="submit">
         <div class="grid row-gap-4 my-gutter">
           <div class="grid col-12">
-            <label class="question-text col-12">Preventatives (flea, tick & heartworm):</label>
+            <label class="question-text col-12"
+              >Preventatives (flea, tick & heartworm):</label
+            >
             <div
               v-for="(pre, index) of formData.preventatives"
               :key="pre.product"
@@ -117,7 +119,9 @@ const removeMedsEntry = (id) => {
                     @change="handleCheckboxChange(index)"
                   />
                   <div>
-                    <label :for="pre.product" class="ml-2 line-height-1">{{ pre.product }}</label>
+                    <label :for="pre.product" class="ml-2 line-height-1">{{
+                      pre.product
+                    }}</label>
 
                     <div v-show="pre.checked">
                       <div class="flex align-items-center ml-2">
@@ -153,7 +157,9 @@ const removeMedsEntry = (id) => {
           <!-- medications vitamins -->
           <div class="col-12">
             <div class="flex flex-column gap-2">
-              <label class="question-text">What are the medications, vitamins and supplements you give?</label>
+              <label class="question-text"
+                >What are the medications, vitamins and supplements you give?</label
+              >
 
               <MedsEntry
                 v-for="(entry, index) of formData.meds"

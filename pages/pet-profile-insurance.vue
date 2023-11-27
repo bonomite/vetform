@@ -21,7 +21,7 @@ const formData = reactive({
 })
 
 onMounted(() => {
-  const localFormData = JSON.parse(localStorage.getItem(LOCAL_STORAGE_NAME))
+  const localFormData = getAndSetCurrentPetProfile()
 
   if (localFormData) {
     formData.has_insurance = localFormData.has_insurance ?? null
