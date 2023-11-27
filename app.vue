@@ -1,3 +1,8 @@
+<script setup>
+onMounted(async () => {
+  await getAndSetUserProfile()
+})
+</script>
 <template>
   <div>
     <div class="app">

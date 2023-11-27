@@ -1,10 +1,10 @@
 <script setup>
-import { useCurrentPetProfileStep } from '~/composables/states.ts'
-import { INSURANCEPROVIDERS } from '~/utils/globals.ts'
-import { useVuelidate } from '@vuelidate/core'
-import { email, helpers, minLength, required } from '@vuelidate/validators'
+import { useCurrentPetProfileStep } from "~/composables/states.ts"
+import { INSURANCEPROVIDERS } from "~/utils/globals.ts"
+import { useVuelidate } from "@vuelidate/core"
+import { email, helpers, minLength, required } from "@vuelidate/validators"
 definePageMeta({
-  layout: 'pet',
+  layout: "pet",
 })
 const currentPetProfileStep = useCurrentPetProfileStep()
 onBeforeMount(async () => {
@@ -29,17 +29,19 @@ onMounted(() => {
     formData.provider_other = localFormData.provider_other ?? null
     formData.other_hospitals = localFormData.other_hospitals ?? null
     formData.other_hospital_name = localFormData.other_hospital_name ?? null
-    formData.other_hospital_visit = new Date(localFormData.other_hospital_visit) ?? null
+    formData.other_hospital_visit = localFormData.other_hospital_visit
+      ? new Date(localFormData.other_hospital_visit)
+      : null
   }
 })
 
 const rules = computed(() => {
   return {
     has_insurance: {
-      required: helpers.withMessage('Answer is required', required),
+      required: helpers.withMessage("Answer is required", required),
     },
     other_hospitals: {
-      required: helpers.withMessage('Answer is required', required),
+      required: helpers.withMessage("Answer is required", required),
     },
   }
 })
@@ -56,7 +58,7 @@ const submit = async () => {
     savePetFormData(formData, true)
 
     // TODO: if one pet only, go directly to ABOUT TODAY, if they added an additional pet, do to the DASHBAORD
-    navigateTo('/dashboard')
+    //navigateTo("/dashboard")
   } else {
     scrollToFirstValidationError()
   }
@@ -93,7 +95,9 @@ const submit = async () => {
             <!-- Insurance Provider -->
             <div v-if="formData.has_insurance === 'Yes'" class="col-12 sm:col-6">
               <div class="flex flex-column gap-2">
-                <label class="question-text" for="Insurance_provider">Who is your insurance prodiver?</label>
+                <label class="question-text" for="Insurance_provider"
+                  >Who is your insurance prodiver?</label
+                >
                 <div class="card flex justify-content-center">
                   <Dropdown
                     v-model="formData.provider"
@@ -110,7 +114,8 @@ const submit = async () => {
             <div class="col-12 sm:col-6">
               <div class="flex flex-column gap-2">
                 <label class="question-text" for="other_hospitals">
-                  Has {{ getName.value }} received care at any other hospitals or vaccine clinics in the past year?
+                  Has {{ getName.value }} received care at any other hospitals or vaccine
+                  clinics in the past year?
                 </label>
                 <div class="card flex">
                   <SelectButton
@@ -119,7 +124,8 @@ const submit = async () => {
                     :options="NOYESOPTIONS"
                     aria-labelledby="basic"
                     :class="{
-                      'p-invalid': v$.other_hospitals.$error && v$.other_hospitals.$invalid,
+                      'p-invalid':
+                        v$.other_hospitals.$error && v$.other_hospitals.$invalid,
                     }"
                   />
                 </div>
@@ -131,7 +137,9 @@ const submit = async () => {
               <!-- other_hospital_name -->
               <div class="w-full mb-3">
                 <div class="flex flex-column gap-2">
-                  <label class="question-text" for="other_hospital_name">What hospital or clinic?</label>
+                  <label class="question-text" for="other_hospital_name"
+                    >What hospital or clinic?</label
+                  >
                   <InputText
                     label="Hospital or clinic name"
                     v-model="formData.other_hospital_name"
@@ -143,9 +151,15 @@ const submit = async () => {
               <!-- other_hospital_visit -->
               <div class="w-full">
                 <div class="flex flex-column gap-2">
-                  <label class="question-text" for="other_hospital_visit">When did you last visit?</label>
+                  <label class="question-text" for="other_hospital_visit"
+                    >When did you last visit?</label
+                  >
                   <div class="card flex gap-4 align-items-center">
-                    <Calendar v-model="formData.other_hospital_visit" showIcon class="w-full" />
+                    <Calendar
+                      v-model="formData.other_hospital_visit"
+                      showIcon
+                      class="w-full"
+                    />
                   </div>
                 </div>
               </div>

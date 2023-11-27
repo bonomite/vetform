@@ -8,7 +8,7 @@ export default defineNuxtRouteMiddleware(async () => {
     const config = useRuntimeConfig()
     const client = useSupabaseClient()
     const user = await client.auth.getSession()
-
+    console.log('currentUser', currentUser)
     // function that gets a user profile
     const getProfile = async () => {
         const {
