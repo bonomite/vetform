@@ -7,7 +7,7 @@ import { useCurrentPetProfileStep } from "~/composables/states.ts"
 definePageMeta({
   layout: "pet",
 })
-
+const isReady = ref(false)
 const currentPetProfileStep = useCurrentPetProfileStep()
 const tempPetsCount = ref(0)
 
@@ -56,6 +56,7 @@ onMounted(() => {
     formData.tracking = localFormData.tracking ?? null
     formData.image = localFormData.image ?? null
   }
+  isReady.value = true
 })
 
 const v$ = useVuelidate(rules, formData)
@@ -94,7 +95,7 @@ const imageRemove = () => {
 </script>
 
 <template>
-  <div class="pet-profile">
+  <div v-if="isReady" class="pet-profile">
     <section class="question your-pet">
       <h1>Now, tell us about your {{ tempPetsCount > 1 ? "other" : "" }} pet...</h1>
 

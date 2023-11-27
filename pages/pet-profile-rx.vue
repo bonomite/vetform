@@ -6,6 +6,7 @@ import { useCurrentPetProfileStep } from "~/composables/states.ts"
 definePageMeta({
   layout: "pet",
 })
+const isReady = ref(false)
 const currentPetProfileStep = useCurrentPetProfileStep()
 const medsEntryRef = ref(null)
 
@@ -42,6 +43,7 @@ onMounted(() => {
     formData.preventatives_other = localFormData.preventatives_other ?? null
     formData.meds = localFormData.meds ?? null
   }
+  isReady.value = true
 })
 
 const handleCheckboxChange = (index) => {
@@ -93,7 +95,7 @@ const removeMedsEntry = (id) => {
 // })
 </script>
 <template>
-  <div class="pet-profile-rx">
+  <div v-if="isReady" class="pet-profile-rx">
     <section class="question your-pet">
       <h1>Medications and/or supplements</h1>
       <form novalidate @submit.prevent="submit">

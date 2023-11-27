@@ -6,6 +6,7 @@ import { email, helpers, minLength, required } from "@vuelidate/validators"
 definePageMeta({
   layout: "pet",
 })
+const isReady = ref(false)
 const currentPetProfileStep = useCurrentPetProfileStep()
 onBeforeMount(async () => {
   currentPetProfileStep.value = 3
@@ -33,6 +34,7 @@ onMounted(() => {
       ? new Date(localFormData.other_hospital_visit)
       : null
   }
+  isReady.value = true
 })
 
 const rules = computed(() => {
@@ -65,7 +67,7 @@ const submit = async () => {
 }
 </script>
 <template>
-  <div class="pet-profile">
+  <div v-if="isReady" class="pet-profile">
     <section class="question your-pet">
       <h1>Insurance for your pet</h1>
 
