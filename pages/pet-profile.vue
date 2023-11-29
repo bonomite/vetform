@@ -84,7 +84,7 @@ async function convertBlobToBase64(event) {
   const reader = new FileReader()
   reader.onloadend = () => {
     const dataURL = reader.result
-    formData.image = dataURL.split(",")[1]
+    formData.image = dataURL
   }
   reader.readAsDataURL(blob)
 }
@@ -229,7 +229,7 @@ const imageRemove = () => {
                   role="presentation"
                   class="p-fileupload-file-thumbnail"
                   alt="uploaded pet image"
-                  :src="`data:image/jpeg;base64,${formData.image}`"
+                  :src="formData.image"
                   width="100"
                   height="100"
                   style="object-fit: cover"

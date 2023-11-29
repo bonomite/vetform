@@ -2,7 +2,7 @@ import { ref } from 'vue'
 import {
     usePetProfileData, useCurrentUser, useCurrentUserProfile
 } from '~/composables/states.ts'
-import { PETOPTIONS } from '~/utils/globals.ts'
+import { PETOPTIONS, NOYESOPTIONS, PETIMAGEBUCKET } from '~/utils/globals.ts'
 
 
 export const getAndSetUserProfile = async () => {
@@ -81,4 +81,52 @@ export const isLast = (index, arr) => {
         return true
     }
     return false
+}
+
+export const ynToBoolean = (value) => {
+    if (value === NOYESOPTIONS[0]) {
+        return true
+    }
+    return false
+}
+
+export const uploadPetPhoto = async (file, filename) => {
+    const client = useSupabaseClient()
+    const { data, error } = await client.storage.from(PETIMAGEBUCKET).upload(filename, file)
+    if (error) {
+        // Handle error
+        console.log('image data upload failed', error)
+    } else {
+        // Handle success
+        console.log('image data success', data)
+
+    }
+}
+
+export const getPublicUrl = async (filename) => {
+    const client = useSupabaseClient()
+    const { data, error } = await client.storage.from(PETIMAGEBUCKET).getPublicUrl(filename)
+
+    if (error) {
+        console.error('Error getting public URL: ', error)
+    } else {
+        console.log('data = ', data)
+        return data.publicUrl
+    }
+}
+
+export const base64ToFile = (base64, filename) => {
+    var arr = base64.split(','),
+        mime = arr[0].match(/:(.*?);/)[1],
+        bstr = atob(arr[1]),
+        n = bstr.length,
+        u8arr = new Uint8Array(n)
+    while (n--) {
+        u8arr[n] = bstr.charCodeAt(n)
+    }
+    return { file: new File([u8arr], filename, { type: mime }), ext: mime.replace('image/', '') }
+}
+
+export const randomUID = function (length = 12) {
+    return Math.random().toString(36).substring(2, length + 2)
 }
