@@ -18,7 +18,7 @@ export const savePetFormData = (formData, submit = false) => {
     )
 
     if (submit) {
-        // submit form to supabase and clear local storage
+        // submit form to supabase 
 
         // add users id to "owner_id" column
         const currentUser = useCurrentUser()
@@ -32,7 +32,11 @@ export const savePetFormData = (formData, submit = false) => {
         // convert the base64 image to a file and use Supabase storage api to upload and get back a URL we can store in the table
         // provider dropdown to just label string
 
+        //clear local storage if supabase update is successful
+        //localStorage.removeItem(LOCAL_STORAGE_NAME)
 
+        // clear petProfileData state if supabase update is successful
+        //petProfileData.value = PET_OBJECT_MODEL
 
     }
 }

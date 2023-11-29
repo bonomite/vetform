@@ -78,7 +78,7 @@ const submit = async () => {
             <div class="col-12 sm:col-6">
               <div class="flex flex-column gap-2">
                 <label class="question-text" for="has_insurance">
-                  Does {{ getName.value }} have pet health insurance?
+                  Does {{ getName }} have pet health insurance?
                 </label>
                 <div class="card flex">
                   <SelectButton
@@ -116,7 +116,7 @@ const submit = async () => {
             <div class="col-12 sm:col-6">
               <div class="flex flex-column gap-2">
                 <label class="question-text" for="other_hospitals">
-                  Has {{ getName.value }} received care at any other hospitals or vaccine
+                  Has {{ getName }} received care at any other hospitals or vaccine
                   clinics in the past year?
                 </label>
                 <div class="card flex">
@@ -166,7 +166,7 @@ const submit = async () => {
                 </div>
               </div>
               <p>
-                Please arrange to have {{ getName.value }}'s records sent to us at
+                Please arrange to have {{ getName }}'s records sent to us at
                 <NuxtLink to="mailto:au1297@vca.com">au1297@vca.com</NuxtLink>
               </p>
             </div>

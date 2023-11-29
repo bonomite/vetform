@@ -41,7 +41,7 @@ onMounted(() => {
 
     formData.preventatives = localFormData.preventatives ?? preventativesArray.value
     formData.preventatives_other = localFormData.preventatives_other ?? null
-    formData.meds = localFormData.meds ?? null
+    formData.meds = localFormData.meds ?? []
   }
   isReady.value = true
 })
@@ -75,6 +75,8 @@ const submit = async () => {
 }
 
 const addMedsEntry = async () => {
+  console.log("formData = ", formData)
+  console.log("formData.meds = ", formData.meds)
   formData.meds.push(MEDS_ENTRY_OBJECT())
   await nextTick()
   const newEntryIndex = medsEntryRef.value.length - 1
