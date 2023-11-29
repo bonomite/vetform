@@ -20,6 +20,8 @@ export const savePetFormData = async (formData, submit = false) => {
 
     if (submit) {
         // submit form to supabase 
+        const client = useSupabaseClient()
+
         //uid
         const uid = randomUID()
         petProfileData.value.uid = uid
@@ -61,12 +63,44 @@ export const savePetFormData = async (formData, submit = false) => {
         // type (jsonb)
 
         console.log('petProfileData.value = ', petProfileData.value)
+        const { error } = await client
+            .from("pets")
+            .upsert({
+                owner_id: petProfileData.value.owner_id,
+                name: petProfileData.value.name,
+                sex: petProfileData.value.sex,
+                spayed_neutered: petProfileData.value.spayed_neutered,
+                dob: petProfileData.value.dob,
+                tracking: petProfileData.value.tracking,
+                image: petProfileData.value.image,
+                lifestyles: petProfileData.value.lifestyles,
+                lifestyles_other: petProfileData.value.lifestyles_other,
+                household_less_than_6_months: petProfileData.value.household_less_than_6_months,
+                pet_aquired_from: petProfileData.value.pet_aquired_from,
+                describe_housing: petProfileData.value.describe_housing,
+                food: petProfileData.value.food,
+                grain_free: petProfileData.value.grain_free,
+                preventatives: petProfileData.value.preventatives,
+                meds: petProfileData.value.meds,
+                has_insurance: petProfileData.value.has_insurance,
+                provider: petProfileData.value.provider,
+                other_hospitals: petProfileData.value.other_hospitals,
+                other_hospital_name: petProfileData.value.other_hospital_name,
+                other_hospital_visit: petProfileData.value.other_hospital_visit,
+                type: petProfileData.value.type,
+                uid: petProfileData.value.uid,
+            })
+        //   If Supabase errors
+        if (error) {
+            console.log('error = ', error)
+            //   If Supabase is successful
+        } else {
+            //clear local storage if supabase update is successful
+            //localStorage.removeItem(LOCAL_STORAGE_NAME)
 
-        //clear local storage if supabase update is successful
-        //localStorage.removeItem(LOCAL_STORAGE_NAME)
-
-        // clear petProfileData state if supabase update is successful
-        //petProfileData.value = PET_OBJECT_MODEL
-
+            // clear petProfileData state if supabase update is successful
+            //petProfileData.value = PET_OBJECT_MODEL
+            //navigateTo("/dashboard")
+        }
     }
 }
