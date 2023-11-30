@@ -24,9 +24,28 @@ if (error) {
 </script>
 
 <template>
-  <h1>Dashboard</h1>
-  <Button label="logout" @click="logUserOut" />
+  <div class="dashboard">
+    <h1>Dashboard</h1>
+    <Button label="logout" @click="logUserOut" />
 
-  <h3>my pets</h3>
-  <pre>{{ myPets }}</pre>
+    <h3>my pets</h3>
+    <div v-for="pet in myPets" class="pet" :key="pet.uid">
+      <h4>{{ pet.name }}</h4>
+      <img :src="pet.image" />
+    </div>
+    <pre>{{ myPets }}</pre>
+  </div>
 </template>
+
+<style lang="scss" scoped>
+.dashboard {
+  .pet {
+    img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      overflow: hidden;
+    }
+  }
+}
+</style>
