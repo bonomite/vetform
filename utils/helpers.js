@@ -172,3 +172,19 @@ export const handleImage = async (url, options, bucket = "petphotos") => {
     //return newUrl.data.publicUrl
 
 }
+
+export const formatPhoneNumber = (phoneNumberString) => {
+    console.log('phoneNumberString= ', phoneNumberString)
+
+    // Remove "1" from the beginning if it exists
+    if (phoneNumberString.charAt(0) === '1') {
+        phoneNumberString = phoneNumberString.substring(1)
+    }
+    // Remove any non-numeric characters
+    let cleaned = phoneNumberString.replace(/\D/g, '')
+
+    // Insert hyphens at the appropriate positions
+    let formatted = cleaned.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3')
+
+    return formatted
+}

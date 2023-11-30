@@ -40,16 +40,26 @@ onMounted(() => {
   isReady.value = true
 })
 
+const isLessThan6MonthsOrExotic = () => {
+  return formData.household_less_than_6_months === "Yes" || isExotic.value
+}
+
 const rules = computed(() => {
   return {
     household_less_than_6_months: {
       required: helpers.withMessage("Answer is required", required),
     },
     pet_aquired_from: {
-      required: helpers.withMessage("Answer is required", required),
+      required: function () {
+        return isLessThan6MonthsOrExotic()
+          ? helpers.withMessage("Answer is required", required)
+          : true
+      },
     },
     describe_housing: {
-      required: helpers.withMessage("Answer is required", required),
+      required: function () {
+        return isExotic.value ? helpers.withMessage("Answer is required", required) : true
+      },
     },
     food: {
       $each: helpers.forEach({
@@ -162,10 +172,7 @@ const removeFoodEntry = (id) => {
           <!-- Aquired -->
           <!-- IF EXOTIC  or < 6 MONTHS -->
 
-          <div
-            class="col-12 sm:col-6"
-            v-if="formData.household_less_than_6_months === 'Yes' || isExotic"
-          >
+          <div class="col-12 sm:col-6" v-if="isLessThan6MonthsOrExotic()">
             <div class="flex flex-column gap-2">
               <label class="question-text">Where did you aquire {{ getName }}?</label>
               <div class="grid">
