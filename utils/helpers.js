@@ -130,3 +130,19 @@ export const base64ToFile = (base64, filename) => {
 export const randomUID = function (length = 12) {
     return Math.random().toString(36).substring(2, length + 2)
 }
+
+export const logUserOut = async () => {
+    //console.log('logout')
+    const client = useSupabaseClient()
+    const currentUser = useCurrentUser()
+    const currentUserProfile = useCurrentUserProfile()
+    // sign out from supabase
+    await client.auth.signOut()
+
+    // set the currentUser composable to null
+    currentUser.value = null
+
+    // reset the currentEpisode composable to the default
+    currentUserProfile.value = null
+    navigateTo("/login")
+}

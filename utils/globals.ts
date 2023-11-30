@@ -132,5 +132,6 @@ export const PET_OBJECT_MODEL = {
     other_hospitals: null,
     other_hospital_name: null,
     other_hospital_visit: null,
+    updated_at: null,
 }
 

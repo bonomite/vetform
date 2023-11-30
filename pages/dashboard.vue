@@ -1,28 +1,32 @@
 <script setup>
-import { useCurrentUser, useCurrentUserProfile } from '~/composables/states.ts'
-
+import { useCurrentUser, useCurrentUserProfile } from "~/composables/states.ts"
+import { logUserOut } from "~/utils/helpers.js"
 definePageMeta({
-  middleware: 'authorized',
+  middleware: "authorized",
 })
 
 const currentUser = useCurrentUser()
 const currentUserProfile = useCurrentUserProfile()
 const client = useSupabaseClient()
-// actions to be taken with the log out button is clicked
-const onLogOut = async () => {
-  // sign out from supabase
-  await client.auth.signOut()
+const user = await client.auth.getSession()
 
-  // set the currentUser composable to null
-  currentUser.value = null
+const myPets = ref(null)
 
-  // reset the currentEpisode composable to the default
-  currentUserProfile.value = null
-  navigateTo('/login')
+const { data, error } = await client
+  .from("pets")
+  .select("*")
+  .eq("owner_id", user?.data?.session?.user.id)
+if (error) {
+  console.error(error)
+} else {
+  myPets.value = data
 }
 </script>
 
 <template>
   <h1>Dashboard</h1>
-  <Button label="logout" @click="onLogOut" />
+  <Button label="logout" @click="logUserOut" />
+
+  <h3>my pets</h3>
+  <pre>{{ myPets }}</pre>
 </template>
