@@ -27,15 +27,15 @@ console.log("currentUserProfile = ", currentUserProfile)
 
 <template>
   <section class="dashboard">
-    <h2 v-if="currentUserProfile && currentUser">
+    <!--    <h2 v-if="currentUserProfile && currentUser.phone && myPets">
       {{ currentUserProfile?.first_name }} {{ currentUserProfile?.last_name }} |
       {{ formatPhoneNumber(currentUser?.phone) }} | {{ currentUserProfile?.email }}
-    </h2>
+    </h2> -->
 
     <Button label="logout" icon="pi pi-sign-out" iconPos="right" @click="logUserOut" />
 
     <h3>Let's get started with today's visit! Select the pet we are seeing today?</h3>
-    <div class="flex gap-3">
+    <div class="flex gap-3 flex-wrap">
       <div v-for="pet in myPets" class="pet" :key="pet.uid">
         <Button class="flex gap-3 py-1">
           <img :src="pet.image" />
