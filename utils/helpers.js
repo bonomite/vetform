@@ -146,3 +146,29 @@ export const logUserOut = async () => {
     currentUserProfile.value = null
     navigateTo("/login")
 }
+
+const extractFilename = (url) => {
+    const urlObj = new URL(url)
+    const pathSegments = urlObj.pathname.split('/')
+    return pathSegments[pathSegments.length - 1]
+}
+
+export const handleImage = async (url, options, bucket = "petphotos") => {
+    const filename = extractFilename(url)
+    console.log('filename = ', filename)
+    const client = useSupabaseClient()
+    const newUrl =
+        await client.storage.from(bucket).getPublicUrl(filename, {
+            transform: {
+                width: options?.width ?? null,
+                height: options?.height ?? null,
+                quality: options?.quality ?? 75,
+                resize: options?.resize ?? 'cover',
+                format: options?.origin ?? null,
+            },
+        })
+    console.log('newUrl = ', newUrl.data.publicUrl)
+    return url
+    //return newUrl.data.publicUrl
+
+}
