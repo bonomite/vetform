@@ -13,6 +13,9 @@ export const useCurrentPetProfileStep = () => useState('useCurrentPetProfileStep
 // global state pet-profile data
 export const usePetProfileData = () => useState('usePetProfileData', () => PET_OBJECT_MODEL)
 
+// global state selected pet data
+export const useSelectedPet = () => useState('useSelectedPet', () => null)
+
 // if (process.client) {
 //     // initially sets the pet profile data from local storage if it exists
 //     const localFormData = JSON.parse(localStorage.getItem(LOCAL_STORAGE_NAME))

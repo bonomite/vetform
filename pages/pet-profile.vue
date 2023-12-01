@@ -1,13 +1,13 @@
 <script setup>
-import { useVuelidate } from '@vuelidate/core'
-import { helpers, required } from '@vuelidate/validators'
-import { savePetFormData } from '~/utils/dataManagement'
-import { useCurrentPetProfileStep } from '~/composables/states.ts'
+import { useVuelidate } from "@vuelidate/core"
+import { helpers, required } from "@vuelidate/validators"
+import { savePetFormData } from "~/utils/dataManagement"
+import { useCurrentPetProfileStep } from "~/composables/states.ts"
 
 definePageMeta({
-  layout: 'pet',
+  layout: "pet",
 })
-
+const isReady = ref(false)
 const currentPetProfileStep = useCurrentPetProfileStep()
 const tempPetsCount = ref(0)
 
@@ -18,19 +18,19 @@ onBeforeMount(async () => {
 const rules = computed(() => {
   return {
     name: {
-      required: helpers.withMessage('Pet name is required', required),
+      required: helpers.withMessage("Pet name is required", required),
     },
     type: {
-      required: helpers.withMessage('Pet type is required', required),
+      required: helpers.withMessage("Pet type is required", required),
     },
     sex: {
-      required: helpers.withMessage('Pet sex is required', required),
+      required: helpers.withMessage("Pet sex is required", required),
     },
     spayed_neutered: {
-      required: helpers.withMessage('Answer is required', required),
+      required: helpers.withMessage("Answer is required", required),
     },
     dob: {
-      required: helpers.withMessage('Pet age is required', required),
+      required: helpers.withMessage("Pet age is required", required),
     },
   }
 })
@@ -46,16 +46,17 @@ const formData = reactive({
 })
 
 onMounted(() => {
-  const localFormData = JSON.parse(localStorage.getItem(LOCAL_STORAGE_NAME))
+  const localFormData = getAndSetCurrentPetProfile()
   if (localFormData) {
     formData.name = localFormData.name ?? null
     formData.type = localFormData.type ?? null
     formData.sex = localFormData.sex ?? null
     formData.spayed_neutered = localFormData.spayed_neutered ?? null
-    formData.dob = new Date(localFormData.dob) ?? null
+    formData.dob = localFormData.dob ? new Date(localFormData.dob) : null
     formData.tracking = localFormData.tracking ?? null
     formData.image = localFormData.image ?? null
   }
+  isReady.value = true
 })
 
 const v$ = useVuelidate(rules, formData)
@@ -83,7 +84,7 @@ async function convertBlobToBase64(event) {
   const reader = new FileReader()
   reader.onloadend = () => {
     const dataURL = reader.result
-    formData.image = dataURL.split(',')[1]
+    formData.image = dataURL
   }
   reader.readAsDataURL(blob)
 }
@@ -94,9 +95,9 @@ const imageRemove = () => {
 </script>
 
 <template>
-  <div class="pet-profile">
+  <div v-if="isReady" class="pet-profile">
     <section class="question your-pet">
-      <h1>Now, tell us about your {{ tempPetsCount > 1 ? 'other' : '' }} pet...</h1>
+      <h1>Now, tell us about your {{ tempPetsCount > 1 ? "other" : "" }} pet...</h1>
 
       <form novalidate @submit.prevent="submit">
         <div class="grid row-gap-4 my-gutter">
@@ -193,7 +194,9 @@ const imageRemove = () => {
           <!-- Microchipped / tattooed -->
           <div class="col-12 sm:col-6">
             <div class="flex flex-column gap-2">
-              <label class="question-text" for="microchipped_tattooed">Microchipped / tattooed</label>
+              <label class="question-text" for="microchipped_tattooed"
+                >Microchipped / tattooed</label
+              >
               <div class="card flex">
                 <SelectButton
                   label="microchipped_tattooed"
@@ -226,7 +229,7 @@ const imageRemove = () => {
                   role="presentation"
                   class="p-fileupload-file-thumbnail"
                   alt="uploaded pet image"
-                  :src="`data:image/jpeg;base64,${formData.image}`"
+                  :src="formData.image"
                   width="100"
                   height="100"
                   style="object-fit: cover"
@@ -245,7 +248,7 @@ const imageRemove = () => {
 </template>
 
 <style lang="scss" scoped>
-.my-gutter [class*='col'] {
+.my-gutter [class*="col"] {
   //padding: 1rem;
 }
 .pet-profile {

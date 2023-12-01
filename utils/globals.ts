@@ -9,6 +9,8 @@ export const PREVENTATIVE_ENTRY_OBJECT = (label) => ({ id: randomId(), product: 
 
 export const MEDS_ENTRY_OBJECT = () => ({ id: randomId(), product: '', times_a_day: 1, dose: '' })
 
+export const PETIMAGEBUCKET = 'petphotos'
+
 export const PETOPTIONS: Array<{}> = [
     { label: 'Dog', exotic: false },
     { label: 'Cat', exotic: false },
@@ -107,6 +109,7 @@ export const PET_PROFILE_STEPS: Array<{}> = [
 ]
 
 export const PET_OBJECT_MODEL = {
+    uid: null,
     owner_id: null,
     name: null,
     type: null,
@@ -123,13 +126,12 @@ export const PET_OBJECT_MODEL = {
     food: [FOOD_ENTRY_OBJECT()],
     grain_free: null,
     preventatives: null,
-    preventatives_other: null,
     meds: [],
     has_insurance: null,
     provider: null,
-    provider_other: null,
     other_hospitals: null,
     other_hospital_name: null,
     other_hospital_visit: null,
+    updated_at: null,
 }
 

@@ -1,5 +1,5 @@
 <script setup>
-import { useCurrentPetProfileStep } from '~/composables/states.ts'
+import { useCurrentPetProfileStep } from "~/composables/states.ts"
 const currentPetProfileStep = useCurrentPetProfileStep()
 //const currentStep = ref(0)
 const isActive = (item) => {
@@ -15,11 +15,7 @@ const isActive = (item) => {
         :model="PET_PROFILE_STEPS"
         aria-label="Form Steps"
         :readonly="true"
-        :pt="{
-          menuitem: ({ context }) => ({
-            class: isActive(context.item) && 'p-highlight p-steps-current',
-          }),
-        }"
+        v-model:activeStep="currentPetProfileStep"
       ></Steps>
     </div>
     <slot />

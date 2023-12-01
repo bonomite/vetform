@@ -8,7 +8,7 @@ export default defineNuxtRouteMiddleware(async () => {
     const config = useRuntimeConfig()
     const client = useSupabaseClient()
     const user = await client.auth.getSession()
-
+    console.log('currentUser', currentUser)
     // function that gets a user profile
     const getProfile = async () => {
         const {
@@ -27,14 +27,12 @@ export default defineNuxtRouteMiddleware(async () => {
             if (data.initialized) {
                 navigateTo('/dashboard')
             } else {
-                if (data.first_name) {
-                    navigateTo('/pet-profile')
-                } else {
+                if (!data.first_name) {
                     navigateTo('/client-profile')
+                } else {
+                    navigateTo('/pet-profile')
                 }
-
             }
-
         }
     }
 

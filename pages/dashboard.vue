@@ -1,28 +1,99 @@
 <script setup>
-import { useCurrentUser, useCurrentUserProfile } from '~/composables/states.ts'
-
+import {
+  useCurrentUser,
+  useCurrentUserProfile,
+  useSelectedPet,
+} from "~/composables/states.ts"
+import { logUserOut, formatPhoneNumber } from "~/utils/helpers.js"
 definePageMeta({
-  middleware: 'authorized',
+  middleware: "authorized",
 })
 
 const currentUser = useCurrentUser()
 const currentUserProfile = useCurrentUserProfile()
+const selectedPet = useSelectedPet()
 const client = useSupabaseClient()
-// actions to be taken with the log out button is clicked
-const onLogOut = async () => {
-  // sign out from supabase
-  await client.auth.signOut()
+const user = await client.auth.getSession()
 
-  // set the currentUser composable to null
-  currentUser.value = null
+const myPets = ref(null)
 
-  // reset the currentEpisode composable to the default
-  currentUserProfile.value = null
-  navigateTo('/login')
+const { data, error } = await client
+  .from("pets")
+  .select("*")
+  .eq("owner_id", user?.data?.session?.user.id)
+if (error) {
+  console.error(error)
+} else {
+  myPets.value = data
 }
+// init clear selected pet
+selectedPet.value = null
+
+const petSelected = (pet) => {
+  console.log("petSelected = ", pet)
+  // set a global var for the selected pet
+  selectedPet.value = pet
+  navigateTo("/todays-visit")
+}
+//console.log("useCurrentUser = ", currentUser)
+//console.log("currentUserProfile = ", currentUserProfile)
 </script>
 
 <template>
-  <h1>Dashboard</h1>
-  <Button label="logout" @click="onLogOut" />
+  <section class="dashboard">
+    <!--    <h2 v-if="currentUserProfile && currentUser.phone && myPets">
+      {{ currentUserProfile?.first_name }} {{ currentUserProfile?.last_name }} |
+      {{ formatPhoneNumber(currentUser?.phone) }} | {{ currentUserProfile?.email }}
+    </h2> -->
+
+    <Button label="logout" icon="pi pi-sign-out" iconPos="right" @click="logUserOut" />
+
+    <h3>Let's get started with today's visit! Select the pet we are seeing today?</h3>
+    <div class="flex gap-3 flex-wrap">
+      <Button
+        v-for="pet in myPets"
+        :key="pet.uid"
+        class="flex gap-3 py-1 pet"
+        @click="petSelected(pet)"
+      >
+        <img :src="pet.image" />
+        <h4>{{ pet.name }}</h4>
+        <i class="pi pi-chevron-right"></i>
+        <!-- pi-check -->
+      </Button>
+
+      <!-- <img
+        :src="
+          handleImage(pet.image, {
+            width: 100,
+            height: 100,
+            quality: 50,
+            resize: 'cover',
+          })
+        "
+      />
+      <img :src="handleImage(pet.image)" /> -->
+    </div>
+    <Button
+      class="mt-8"
+      label="Add another pet"
+      icon="pi pi-plus"
+      @click="navigateTo('/pet-profile')"
+    />
+    <!--     <pre class="text-xs">{{ myPets }}</pre> -->
+  </section>
 </template>
+
+<style lang="scss" scoped>
+.dashboard {
+  .pet {
+    img {
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      overflow: hidden;
+    }
+  }
+}
+</style>

@@ -1,12 +1,14 @@
 <script setup>
-import { useCurrentPetProfileStep } from '~/composables/states.ts'
-import { useVuelidate } from '@vuelidate/core'
-import { email, helpers, minLength, required } from '@vuelidate/validators'
+import { useCurrentPetProfileStep, usePetProfileData } from "~/composables/states.ts"
+import { useVuelidate } from "@vuelidate/core"
+import { email, helpers, minLength, required } from "@vuelidate/validators"
 
 definePageMeta({
-  layout: 'pet',
+  layout: "pet",
 })
+const isReady = ref(false)
 const currentPetProfileStep = useCurrentPetProfileStep()
+const petProfileData = usePetProfileData()
 const foodEntryRef = ref(null)
 
 onBeforeMount(async () => {
@@ -24,29 +26,40 @@ const formData = reactive({
 })
 
 onMounted(() => {
-  const localFormData = JSON.parse(localStorage.getItem(LOCAL_STORAGE_NAME))
-
+  const localFormData = getAndSetCurrentPetProfile()
   if (localFormData) {
     formData.lifestyles = localFormData.lifestyles ?? null
     formData.lifestyles_other = localFormData.lifestyles_other ?? null
-    formData.household_less_than_6_months = localFormData.household_less_than_6_months ?? null
+    formData.household_less_than_6_months =
+      localFormData.household_less_than_6_months ?? null
     formData.pet_aquired_from = localFormData.pet_aquired_from ?? null
     formData.describe_housing = localFormData.describe_housing ?? null
     formData.food = localFormData.food ?? [FOOD_ENTRY_OBJECT()]
     formData.grain_free = localFormData.grain_free ?? null
   }
+  isReady.value = true
 })
+
+const isLessThan6MonthsOrExotic = () => {
+  return formData.household_less_than_6_months === "Yes" || isExotic.value
+}
 
 const rules = computed(() => {
   return {
     household_less_than_6_months: {
-      required: helpers.withMessage('Answer is required', required),
+      required: helpers.withMessage("Answer is required", required),
     },
     pet_aquired_from: {
-      required: helpers.withMessage('Answer is required', required),
+      required: function () {
+        return isLessThan6MonthsOrExotic()
+          ? helpers.withMessage("Answer is required", required)
+          : true
+      },
     },
     describe_housing: {
-      required: helpers.withMessage('Answer is required', required),
+      required: function () {
+        return isExotic.value ? helpers.withMessage("Answer is required", required) : true
+      },
     },
     food: {
       $each: helpers.forEach({
@@ -54,7 +67,7 @@ const rules = computed(() => {
       }),
     },
     grain_free: {
-      required: helpers.withMessage('Answer is required', required),
+      required: helpers.withMessage("Answer is required", required),
     },
   }
 })
@@ -93,7 +106,7 @@ const removeFoodEntry = (id) => {
 }
 </script>
 <template>
-  <div class="pet-profile">
+  <div v-if="isReady" class="pet-profile">
     <section class="question your-pet">
       <h1>Your pet's lifestyle</h1>
 
@@ -115,10 +128,14 @@ const removeFoodEntry = (id) => {
                     name="lifestyle"
                     :value="lifestyle.label"
                   />
-                  <label :for="lifestyle.key" class="ml-2 line-height-2">{{ lifestyle.label }}</label>
+                  <label :for="lifestyle.key" class="ml-2 line-height-2">{{
+                    lifestyle.label
+                  }}</label>
                 </div>
                 <InputText
-                  v-if="isLast(index, LIFESTYLES) && formData.lifestyles?.includes('Other')"
+                  v-if="
+                    isLast(index, LIFESTYLES) && formData.lifestyles?.includes('Other')
+                  "
                   v-model="formData.lifestyles_other"
                   type="text"
                   placeholder="Other lifestyle"
@@ -131,7 +148,9 @@ const removeFoodEntry = (id) => {
           <!-- household <6 months -->
           <div class="col-12 sm:col-6">
             <div class="flex flex-column gap-2">
-              <label class="question-text">Has {{ getName }} been in your household less than 6 months?</label>
+              <label class="question-text"
+                >Has {{ getName }} been in your household less than 6 months?</label
+              >
 
               <div class="flex">
                 <SelectButton
@@ -140,7 +159,9 @@ const removeFoodEntry = (id) => {
                   :options="NOYESOPTIONS"
                   aria-labelledby="basic"
                   :class="{
-                    'p-invalid': v$.household_less_than_6_months.$error && v$.household_less_than_6_months.$invalid,
+                    'p-invalid':
+                      v$.household_less_than_6_months.$error &&
+                      v$.household_less_than_6_months.$invalid,
                   }"
                 />
               </div>
@@ -151,12 +172,21 @@ const removeFoodEntry = (id) => {
           <!-- Aquired -->
           <!-- IF EXOTIC  or < 6 MONTHS -->
 
-          <div class="col-12 sm:col-6" v-if="formData.household_less_than_6_months === 'Yes' || isExotic">
+          <div class="col-12 sm:col-6" v-if="isLessThan6MonthsOrExotic()">
             <div class="flex flex-column gap-2">
               <label class="question-text">Where did you aquire {{ getName }}?</label>
               <div class="grid">
-                <div v-for="option in PET_AQUIRED_FROM_OPTIONS" :key="option" class="flex align-items-center col-6">
-                  <RadioButton v-model="formData.pet_aquired_from" :inputId="option" name="pizza" :value="option" />
+                <div
+                  v-for="option in PET_AQUIRED_FROM_OPTIONS"
+                  :key="option"
+                  class="flex align-items-center col-6"
+                >
+                  <RadioButton
+                    v-model="formData.pet_aquired_from"
+                    :inputId="option"
+                    name="pizza"
+                    :value="option"
+                  />
                   <label :for="option" class="ml-2 line-height-2">{{ option }}</label>
                 </div>
                 <Error :errArr="v$.pet_aquired_from.$errors" />
@@ -169,7 +199,9 @@ const removeFoodEntry = (id) => {
 
           <div v-if="isExotic" class="col-12 sm:col-6">
             <div class="flex flex-column gap-2">
-              <label class="question-text" for="pet_name">Describe housing/enclosure (include substrate/litter)</label>
+              <label class="question-text" for="pet_name"
+                >Describe housing/enclosure (include substrate/litter)</label
+              >
               <Textarea
                 v-model="formData.describe_housing"
                 rows="4"
@@ -210,7 +242,10 @@ const removeFoodEntry = (id) => {
               /> -->
 
               <div v-for="(item, index) in formData.food" :key="index" class="-mt-1">
-                <small class="p-error" v-if="v$.food.$each.$response.$data[index].product.$error">
+                <small
+                  class="p-error"
+                  v-if="v$.food.$each.$response.$data[index].product.$error"
+                >
                   Product name is required.
                 </small>
               </div>
@@ -225,7 +260,9 @@ const removeFoodEntry = (id) => {
           <!-- grain free -->
           <div class="col-12 sm:col-6">
             <div class="flex flex-column gap-2">
-              <label class="question-text">Are any of these foods raw or grain free?</label>
+              <label class="question-text"
+                >Are any of these foods raw or grain free?</label
+              >
               <div class="flex">
                 <SelectButton
                   label="spayed_neutered"
