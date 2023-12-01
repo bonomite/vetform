@@ -4,9 +4,10 @@ import {
   useCurrentUserProfile,
   useSelectedPet,
 } from "~/composables/states.ts"
-
+import { useToast } from "primevue/usetoast"
 const currentUser = useCurrentUser()
 const currentUserProfile = useCurrentUserProfile()
+const toast = useToast()
 const selectedPet = useSelectedPet()
 </script>
 <template>

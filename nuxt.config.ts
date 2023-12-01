@@ -9,7 +9,18 @@ export default defineNuxtConfig({
 	build: {
 		transpile: ['primevue'],
 	},
-	modules: ['@nuxt/image', '@zadigetvoltaire/nuxt-gtm', '@nuxtjs/supabase', '@hypernym/nuxt-gsap'],
+	modules: ['@nuxt/image', '@zadigetvoltaire/nuxt-gtm', '@nuxtjs/supabase', '@hypernym/nuxt-gsap', 'nuxt-primevue'],
+	primevue: {
+		options: {
+			ripple: true,
+		},
+		components: {
+			include: ['Button', 'Calendar', 'Checkbox', 'Dropdown', 'FileUpload', 'InputText', 'InputMask', 'InputNumber', 'RadioButton', 'SelectButton', 'Steps', 'Textarea', 'Toast']
+		},
+		directives: {
+			include: ['Ripple']
+		}
+	},
 	image: {
 		dir: 'assets/images',
 		screens: {
