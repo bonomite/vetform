@@ -12,7 +12,7 @@ export const getAndSetUserProfile = async () => {
     const config = useRuntimeConfig()
     const client = useSupabaseClient()
     const user = await client.auth.getSession()
-    console.log('currentUser', currentUser)
+    //console.log('currentUser', currentUser)
     // function that gets a user profile
     const getProfile = async () => {
         const {
@@ -24,7 +24,7 @@ export const getAndSetUserProfile = async () => {
             .eq('id', currentUser.value.id)
             .single()
         if (error) {
-            console.error(error)
+            console.log(error)
         } else if (data) {
             // set the current user profile state
             currentUserProfile.value = data
@@ -39,7 +39,7 @@ export const getAndSetUserProfile = async () => {
             currentUser.value = user?.data?.session?.user
             getProfile()
         } else {
-            console.error(error)
+            console.log('logged out')
         }
     }
 

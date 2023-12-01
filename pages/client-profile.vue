@@ -58,7 +58,7 @@ async function submit() {
 watch(
   () => currentUserProfile.value,
   () => {
-    console.log("currentUserProfile.value", currentUserProfile.value)
+    //console.log("currentUserProfile.value", currentUserProfile.value)
     formData.first_name = currentUserProfile.value?.first_name ?? ""
     formData.last_name = currentUserProfile.value?.last_name ?? ""
     formData.email = currentUserProfile.value?.email ?? ""

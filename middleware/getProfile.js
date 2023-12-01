@@ -20,12 +20,10 @@ export default defineNuxtRouteMiddleware(async () => {
             .eq('id', currentUser.value.id)
             .single()
         if (error) {
-            console.error(error)
+            console.log(error)
         } else if (data) {
             // set the current user profile state
             currentUserProfile.value = data
-            //console.log('currentUserProfile.value', currentUserProfile.value)
-
         }
     }
 

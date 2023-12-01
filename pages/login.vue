@@ -1,19 +1,20 @@
 <script setup>
-import { useVuelidate } from '@vuelidate/core'
-import { useToast } from 'primevue/usetoast'
-import { useCurrentUser } from '~/composables/states.ts'
+import { useVuelidate } from "@vuelidate/core"
+import { useToast } from "primevue/usetoast"
+import { useCurrentUser, useCurrentUserProfile } from "~/composables/states.ts"
 
 const toast = useToast()
 const currentUser = useCurrentUser()
+const currentUserProfile = useCurrentUserProfile()
 const client = useSupabaseClient()
-console.log('client', client)
+//console.log('client', client)
 const rules = computed(() => {
   return {
     phone: validatePhone(),
   }
 })
 const formData = reactive({
-  phone: '',
+  phone: "",
 })
 const isSmsSent = ref(false)
 const verifyCode = ref(null)
@@ -22,24 +23,22 @@ const v$ = useVuelidate(rules, formData)
 async function phoneAuth() {
   v$.value.$validate()
   if (!v$.value.$error) {
-    console.log('WHY')
+    console.log("WHY")
     let { user, error } = await client.auth.signInWithOtp({
       phone: convertPhoneToE164(formData.phone),
     })
 
-    console.log('user', user)
-
     if (error) {
       // Error with Supabase
       //console.log('error', error)
-      toast.add(toastMessage('database_error'))
+      toast.add(toastMessage("database_error"))
     } else {
       // if no error show the verify code input
       isSmsSent.value = true
-      toast.add(toastMessage('sms_code_sent', formData.phone))
+      toast.add(toastMessage("sms_code_sent", formData.phone))
     }
   } else {
-    toast.add(toastMessage('phone_auth_failed'))
+    toast.add(toastMessage("phone_auth_failed"))
   }
 }
 
@@ -47,21 +46,31 @@ async function verify() {
   let { session, error } = await client.auth.verifyOtp({
     phone: convertPhoneToE164(formData.phone),
     token: verifyCode.value,
-    type: 'sms',
+    type: "sms",
   })
   if (error) {
-    toast.add(toastMessage('sms_code_failed'))
+    toast.add(toastMessage("sms_code_failed"))
   } else {
     currentUser.value = await client.auth.getSession()
-    if (currentUser.value.data.session.user.email) {
-      // Previously logged in
-      navigateTo('/dashboard')
-    } else {
-      navigateTo('/client-profile')
-      // New user
+    await nextTick()
+    const { data, error } = await client
+      .from("profiles")
+      .select("*")
+      .eq("id", currentUser.value.data.session.user.id)
+      .single()
+    if (error) {
+      console.log(error)
+    } else if (data) {
+      // set the current user profile state
+      currentUserProfile.value = data
+      if (data.initialized) {
+        // Previously logged in
+        navigateTo("/dashboard")
+      } else {
+        // New user
+        navigateTo("/client-profile")
+      }
     }
-    //console.log(session)
-    //console.log(currentUser)
   }
 }
 </script>
@@ -88,7 +97,11 @@ async function verify() {
     <div v-else>
       <div class="flex flex-column">
         <label for="phone">Enter your verification code sent to your phone number</label>
-        <InputText v-model="verifyCode" autofocus @keydown="(e) => (e.key === 'Enter' ? verify() : null)" />
+        <InputText
+          v-model="verifyCode"
+          autofocus
+          @keydown="(e) => (e.key === 'Enter' ? verify() : null)"
+        />
         <Button label="Verify" @click="verify" />
         <Button link label="Resend Code" @click="phoneAuth" />
         <Button
