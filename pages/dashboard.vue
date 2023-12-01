@@ -1,5 +1,9 @@
 <script setup>
-import { useCurrentUser, useCurrentUserProfile } from "~/composables/states.ts"
+import {
+  useCurrentUser,
+  useCurrentUserProfile,
+  useSelectedPet,
+} from "~/composables/states.ts"
 import { logUserOut, formatPhoneNumber } from "~/utils/helpers.js"
 definePageMeta({
   middleware: "authorized",
@@ -7,6 +11,7 @@ definePageMeta({
 
 const currentUser = useCurrentUser()
 const currentUserProfile = useCurrentUserProfile()
+const selectedPet = useSelectedPet()
 const client = useSupabaseClient()
 const user = await client.auth.getSession()
 
@@ -21,8 +26,17 @@ if (error) {
 } else {
   myPets.value = data
 }
-console.log("useCurrentUser = ", currentUser)
-console.log("currentUserProfile = ", currentUserProfile)
+// init clear selected pet
+selectedPet.value = null
+
+const petSelected = (pet) => {
+  console.log("petSelected = ", pet)
+  // set a global var for the selected pet
+  selectedPet.value = pet
+  navigateTo("/todays-visit")
+}
+//console.log("useCurrentUser = ", currentUser)
+//console.log("currentUserProfile = ", currentUserProfile)
 </script>
 
 <template>
@@ -36,15 +50,19 @@ console.log("currentUserProfile = ", currentUserProfile)
 
     <h3>Let's get started with today's visit! Select the pet we are seeing today?</h3>
     <div class="flex gap-3 flex-wrap">
-      <div v-for="pet in myPets" class="pet" :key="pet.uid">
-        <Button class="flex gap-3 py-1">
-          <img :src="pet.image" />
-          <h4>{{ pet.name }}</h4>
-          <i class="pi pi-chevron-right"></i>
-          <!-- pi-check -->
-        </Button>
+      <Button
+        v-for="pet in myPets"
+        :key="pet.uid"
+        class="flex gap-3 py-1 pet"
+        @click="petSelected(pet)"
+      >
+        <img :src="pet.image" />
+        <h4>{{ pet.name }}</h4>
+        <i class="pi pi-chevron-right"></i>
+        <!-- pi-check -->
+      </Button>
 
-        <!-- <img
+      <!-- <img
         :src="
           handleImage(pet.image, {
             width: 100,
@@ -55,7 +73,6 @@ console.log("currentUserProfile = ", currentUserProfile)
         "
       />
       <img :src="handleImage(pet.image)" /> -->
-      </div>
     </div>
     <Button
       class="mt-8"
