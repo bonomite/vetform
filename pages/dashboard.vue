@@ -33,7 +33,12 @@ const petSelected = (pet) => {
   console.log("petSelected = ", pet)
   // set a global var for the selected pet
   selectedPet.value = pet
-  navigateTo("/todays-visit")
+  navigateTo({
+    path: "/todays-visit",
+    query: {
+      petuid: pet.uid,
+    },
+  })
 }
 //console.log("useCurrentUser = ", currentUser)
 //console.log("currentUserProfile = ", currentUserProfile)
@@ -41,7 +46,7 @@ const petSelected = (pet) => {
 
 <template>
   <section class="dashboard">
-    <!--    <h2 v-if="currentUserProfile && currentUser.phone && myPets">
+    <!-- <h2 v-if="currentUserProfile && currentUser.phone && myPets">
       {{ currentUserProfile?.first_name }} {{ currentUserProfile?.last_name }} |
       {{ formatPhoneNumber(currentUser?.phone) }} | {{ currentUserProfile?.email }}
     </h2> -->
@@ -56,7 +61,7 @@ const petSelected = (pet) => {
         class="flex gap-3 py-1 pet"
         @click="petSelected(pet)"
       >
-        <img :src="pet.image" />
+        <NuxtImg :src="pet.image" />
         <h4>{{ pet.name }}</h4>
         <i class="pi pi-chevron-right"></i>
         <!-- pi-check -->
