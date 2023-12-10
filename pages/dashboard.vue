@@ -40,6 +40,15 @@ const petSelected = (pet) => {
     },
   })
 }
+
+const editUser = () => {
+  navigateTo({
+    path: "/client-profile",
+    query: {
+      edit: "true",
+    },
+  })
+}
 //console.log("useCurrentUser = ", currentUser)
 //console.log("currentUserProfile = ", currentUserProfile)
 </script>
@@ -48,14 +57,14 @@ const petSelected = (pet) => {
   <section class="dashboard">
     <div class="user-header flex justify-content-between align-items-center">
       <div class="left flex align-items-center gap-2">
-        <Button icon="pi pi-user-edit" rounded @click="editUser" />
+        <Button class="flex-none" icon="pi pi-user-edit" rounded @click="editUser" />
         <h4 v-if="currentUserProfile && currentUser?.phone && myPets">
           {{ currentUserProfile?.first_name }} {{ currentUserProfile?.last_name }} |
           {{ formatPhoneNumber(currentUser?.phone) }} | {{ currentUserProfile?.email }}
         </h4>
       </div>
 
-      <Button icon="pi pi-sign-out" rounded @click="logUserOut" />
+      <Button class="flex-none" icon="pi pi-sign-out" rounded @click="logUserOut" />
     </div>
     <h3>Let's get started with today's visit! Select the pet we are seeing today?</h3>
     <div class="flex gap-3 flex-wrap">
