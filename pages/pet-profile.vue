@@ -2,7 +2,7 @@
 import { useVuelidate } from "@vuelidate/core"
 import { helpers, required } from "@vuelidate/validators"
 import { savePetFormData } from "~/utils/dataManagement"
-import { useCurrentPetProfileStep } from "~/composables/states.ts"
+import { useCurrentPetProfileStep } from "~/composables/states"
 
 definePageMeta({
   layout: "pet",

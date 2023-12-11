@@ -3,7 +3,7 @@ import {
   useCurrentUser,
   useCurrentUserProfile,
   useSelectedPet,
-} from "~/composables/states.ts"
+} from "~/composables/states"
 import { logUserOut, formatPhoneNumber } from "~/utils/helpers.js"
 definePageMeta({
   middleware: "authorized",

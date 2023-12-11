@@ -1,7 +1,7 @@
 <script setup>
 import { useVuelidate } from "@vuelidate/core"
 import { useToast } from "primevue/usetoast"
-import { useCurrentUser, useCurrentUserProfile } from "~/composables/states.ts"
+import { useCurrentUser, useCurrentUserProfile } from "~/composables/states"
 
 const toast = useToast()
 const currentUser = useCurrentUser()

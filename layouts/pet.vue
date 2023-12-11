@@ -1,5 +1,5 @@
 <script setup>
-import { useCurrentPetProfileStep } from "~/composables/states.ts"
+import { useCurrentPetProfileStep } from "~/composables/states"
 const currentPetProfileStep = useCurrentPetProfileStep()
 //const currentStep = ref(0)
 const isActive = (item) => {

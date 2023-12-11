@@ -46,10 +46,16 @@ export const getAndSetUserProfile = async () => {
 }
 
 export const getAndSetCurrentPetProfile = () => {
-    const ls = JSON.parse(localStorage.getItem(LOCAL_STORAGE_NAME))
+    const ls = JSON.parse(localStorage.getItem(PET_LOCAL_STORAGE_NAME))
     const petProfileData = usePetProfileData()
     petProfileData.value = ls
     return petProfileData.value
+}
+export const getAndSetCurrentVisit = () => {
+    const ls = JSON.parse(localStorage.getItem(VISIT_LOCAL_STORAGE_NAME))
+    const visitData = useVisitData()
+    visitData.value = ls
+    return visitData.value
 }
 
 export const getName = computed(() => {

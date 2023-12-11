@@ -1,12 +1,7 @@
 import { reactive } from 'vue'
-import { usePetProfileData } from '~/composables/states.ts'
-import { LOCAL_STORAGE_NAME } from '~/utils/globals.ts'
-import { useCurrentUser, useCurrentUserProfile } from '~/composables/states.ts'
+import { useCurrentUser, useCurrentUserProfile, usePetProfileData, useVisitData } from '~/composables/states.ts'
+import { PET_LOCAL_STORAGE_NAME, VISIT_LOCAL_STORAGE_NAME, PET_OBJECT_MODEL, VISIT_OBJECT_MODEL } from '~/utils/globals.ts'
 import { ynToBoolean, randomUID } from '~/utils/helpers.js'
-
-
-
-
 
 export const savePetFormData = async (formData, submit = false) => {
     const petProfileData = reactive(usePetProfileData())
@@ -16,7 +11,7 @@ export const savePetFormData = async (formData, submit = false) => {
 
     if (!submit) {
         localStorage.setItem(
-            LOCAL_STORAGE_NAME,
+            PET_LOCAL_STORAGE_NAME,
             JSON.stringify(petProfileData.value)
         )
     } else {
@@ -82,7 +77,7 @@ export const savePetFormData = async (formData, submit = false) => {
             }
 
             //clear local storage if supabase update is successful
-            localStorage.removeItem(LOCAL_STORAGE_NAME)
+            localStorage.removeItem(PET_LOCAL_STORAGE_NAME)
 
             // clear petProfileData state if supabase update is successful
             petProfileData.value = PET_OBJECT_MODEL
@@ -91,4 +86,58 @@ export const savePetFormData = async (formData, submit = false) => {
             navigateTo("/dashboard")
         }
     }
+}
+
+export const saveVisitFormData = async (formData) => {
+    const visitData = reactive(useVisitData())
+    //update global state for pet profile
+    visitData.value = { ...visitData.value, ...formData }
+    // update browser local storage for pet profile
+
+    // localStorage.setItem(
+    //     VISIT_LOCAL_STORAGE_NAME,
+    //     JSON.stringify(visitData.value)
+    // )
+
+    // submit form to supabase 
+    const client = useSupabaseClient()
+    const currentUser = useCurrentUser()
+
+    const uid = randomUID()
+
+    //image
+    // convert the base64 image to a file and use Supabase storage api to upload and get back a URL we can store in the table
+    // const imageFile = base64ToFile(visitData.value.image, uid)
+    // await uploadPetPhoto(imageFile.file, `${uid}.${imageFile.ext}`)
+    // const publicImageUrls = await getPublicUrl(`${uid}.${imageFile.ext}`)
+
+    console.log('visitData.value = ', visitData.value)
+    // const { error } = await client
+    //     .from("visits")
+    //     .upsert({
+    //         pet_id: uid,
+    //         owner_id: currentUser.value.id,
+    //         refills: ynToBoolean(visitData.value.refills),
+    //         skin_lesions: ynToBoolean(visitData.value.skin_lesions),
+    //         skin_lesions_coordinates: visitData.value.skin_lesions_coordinates,
+    //         images: publicImageUrls,
+    //         preventatives: visitData.value.preventatives.filter(item => item.checked),
+    //         updated_at: new Date().toISOString(),
+    //     })
+    // //   If Supabase errors
+    // if (error) {
+    //     console.log('error = ', error)
+    //     //   If Supabase is successful
+    // } else {
+
+    //     //clear local storage if supabase update is successful
+    //     localStorage.removeItem(VISIT_LOCAL_STORAGE_NAME)
+
+    //     // clear visitData state if supabase update is successful
+    //     visitData.value = VISIT_OBJECT_MODEL
+
+    //     // what to do now?
+
+    // }
+
 }

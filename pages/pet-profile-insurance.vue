@@ -1,5 +1,5 @@
 <script setup>
-import { useCurrentPetProfileStep } from "~/composables/states.ts"
+import { useCurrentPetProfileStep } from "~/composables/states"
 import { INSURANCEPROVIDERS } from "~/utils/globals.ts"
 import { useVuelidate } from "@vuelidate/core"
 import { email, helpers, minLength, required } from "@vuelidate/validators"
