@@ -6,6 +6,7 @@ import {
   useCurrentUserProfile,
   useSelectedPet,
 } from "~/composables/states"
+import { VISIT_LOCAL_STORAGE_NAME } from "~/utils/globals.ts"
 import { saveVisitFormData } from "~/utils/dataManagement"
 import { useToast } from "primevue/usetoast"
 
@@ -37,6 +38,19 @@ const rules = computed(() => {
   }
 })
 
+const initPreventatives = () => {
+  const newPreventatives = []
+  selectedPet.value.preventatives.forEach((pre) => {
+    pre.date = null
+    newPreventatives.push(pre)
+  })
+  return newPreventatives
+}
+
+watch(selectedPet, () => {
+  //formData.preventatives = initPreventatives()
+})
+
 const formData = reactive({
   goals_concerns: null,
   refills: null,
@@ -46,9 +60,16 @@ const formData = reactive({
   preventatives: [],
 })
 
+watch(formData, () => {
+  console.log("formData = ", formData)
+  localStorage.setItem(VISIT_LOCAL_STORAGE_NAME, JSON.stringify(formData))
+})
+
 onMounted(() => {
   const localFormData = getAndSetCurrentVisit()
+
   if (localFormData) {
+    console.log("localFormData = ", localFormData)
     formData.goals_concerns = localFormData.goals_concerns ?? null
     formData.refills = localFormData.refills ?? null
     formData.skin_lesions = localFormData.skin_lesions ?? null
@@ -56,6 +77,7 @@ onMounted(() => {
     formData.images = localFormData.images ?? []
     formData.preventatives = localFormData.preventatives ?? []
   }
+
   isReady.value = true
 })
 
@@ -213,7 +235,7 @@ async function convertBlobToBase64(event) {
           <div class="question-text mb-2" for="image">
             When did you last administer these preventatives?
           </div>
-          <div class="flex flex-column gap-3">
+          <div v-if="selectedPet" class="flex flex-column gap-3">
             <div v-for="(p, index) in selectedPet.preventatives" :key="p.id">
               <div class="flex gap-3 align-items-center">
                 <label for="icondisplay" class="font-bold block mb-2">
@@ -234,7 +256,7 @@ async function convertBlobToBase64(event) {
       </div>
     </form>
 
-    <pre>{{ selectedPet }}</pre>
+    <pre v-if="selectedPet">{{ selectedPet }}</pre>
   </section>
 </template>
 
