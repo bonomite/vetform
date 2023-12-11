@@ -174,7 +174,7 @@ export const handleImage = async (url, options, bucket = "petphotos") => {
 }
 
 export const formatPhoneNumber = (phoneNumberString) => {
-    console.log('phoneNumberString= ', phoneNumberString)
+    //console.log('phoneNumberString= ', phoneNumberString)
 
     // Remove "1" from the beginning if it exists
     if (phoneNumberString.charAt(0) === '1') {

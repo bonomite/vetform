@@ -19,7 +19,6 @@ const rules = computed(() => {
     first_name: validateRequired("First name is required"),
     last_name: validateRequired("Last name is required"),
     email: validateEmail(),
-    phone: validatePhone(),
   }
 })
 //console.log("currentUser = ", currentUser)
@@ -27,7 +26,6 @@ const formData = reactive({
   first_name: currentUserProfile.value?.first_name ?? "",
   last_name: currentUserProfile.value?.last_name ?? "",
   email: currentUserProfile.value?.email ?? "",
-  phone: formatPhoneNumber(currentUser.value.phone) ?? "",
 })
 
 const v$ = useVuelidate(rules, formData)
@@ -35,11 +33,11 @@ const v$ = useVuelidate(rules, formData)
 async function submit() {
   v$.value.$validate()
   if (!v$.value.$error) {
-    console.log("good")
     // No validation error, save to Supabase
     currentUser.value = await client.auth.getSession()
+    const currentPhone = formatPhoneNumber(currentUser.value.data.session.user.phone)
     //console.log(currentUser.value)
-    const { error } = await client
+    const sb1 = await client
       .from("profiles")
       .update({
         first_name: formData.first_name,
@@ -48,8 +46,9 @@ async function submit() {
         updated_at: new Date().toISOString(),
       })
       .eq("id", currentUser.value.data.session.user.id)
+
     //   If Supabase errors
-    if (error) {
+    if (sb1?.error) {
       toast.add(toastMessage("database_error"))
     } else {
       toast.add(toastMessage("profile_saved"))
@@ -60,7 +59,6 @@ async function submit() {
       }
     }
   } else {
-    console.log("error = ", v$.value)
     scrollToFirstValidationError()
   }
 }
@@ -74,12 +72,6 @@ watch(
     formData.email = currentUserProfile.value?.email ?? ""
   }
 )
-const myInputRef = ref(null)
-
-onMounted(() => {
-  // hack needed to fix valildation
-  myInputRef.value?.$el.focus()
-})
 </script>
 <template>
   <section>
@@ -121,20 +113,16 @@ onMounted(() => {
         ></InputText>
         <Error :errArr="v$.email.$errors" />
       </div>
-      <div v-show="isEditing" class="flex flex-column">
-        <label for="phone">Phone</label>
-        <InputMask
-          ref="myInputRef"
-          v-model="formData.phone"
-          date="phone"
-          mask="(999) 999-9999"
-          placeholder="(999) 999-9999"
-          @keydown="(e) => (e.key === 'Enter' ? phoneAuth() : null)"
-          :autofocus="true"
+      <div v-if="isEditing" class="flex align-items-center gap-2 mt-2">
+        <label for="email">Phone</label>
+        <Button
+          plain
+          label="Change phone number"
+          size="small"
+          @click="navigateTo('/change-phone')"
         />
-        <Error :errArr="v$.phone.$errors" />
       </div>
-      <div>
+      <div class="mt-6">
         <Button type="submit" :label="isEditing ? 'Update Profile' : 'Save Profile'" />
       </div>
     </form>
