@@ -39,15 +39,6 @@ const rules = computed(() => {
   }
 })
 
-// const initPreventatives = () => {
-//   const newPreventatives = []
-//   selectedPet.value.preventatives.forEach((pre) => {
-//     pre.date = null
-//     newPreventatives.push(pre)
-//   })
-//   return newPreventatives
-// }
-
 watch(selectedPet, () => {})
 
 const formData = reactive({
@@ -95,7 +86,7 @@ const v$ = useVuelidate(rules, formData)
 const submit = async () => {
   v$.value.$validate()
   if (!v$.value.$error) {
-    saveVisitFormData(formData)
+    saveVisitFormData(formData, selectedPet.value)
   } else {
     scrollToFirstValidationError()
   }

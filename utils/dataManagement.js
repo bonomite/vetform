@@ -88,16 +88,24 @@ export const savePetFormData = async (formData, submit = false) => {
     }
 }
 
-export const saveVisitFormData = async (formData) => {
-    const visitData = reactive(useVisitData())
-    //update global state for pet profile
-    visitData.value = { ...visitData.value, ...formData }
-    // update browser local storage for pet profile
+const initPreventatives = (visitData, selectedPet) => {
+    const newPreventatives = []
+    selectedPet.preventatives.forEach((pre, index) => {
+        pre.date = String(visitData.preventatives[index])
+        newPreventatives.push(pre)
+    })
+    console.log('newPreventatives= ', newPreventatives)
+    return newPreventatives
+    //return visitData.preventatives
+}
 
-    // localStorage.setItem(
-    //     VISIT_LOCAL_STORAGE_NAME,
-    //     JSON.stringify(visitData.value)
-    // )
+export const saveVisitFormData = async (formData, selectedPet) => {
+    //update global state for pet profile
+    const getFormData = computed(() => formData)
+    const visitData = getFormData.value
+    console.log('visitData INIT = ', visitData)
+    // format preventatives
+    visitData.preventatives = initPreventatives(visitData, selectedPet)
 
     // submit form to supabase 
     const client = useSupabaseClient()
@@ -107,11 +115,11 @@ export const saveVisitFormData = async (formData) => {
 
     //image
     // convert the base64 image to a file and use Supabase storage api to upload and get back a URL we can store in the table
-    // const imageFile = base64ToFile(visitData.value.image, uid)
+    // const imageFile = base64ToFile(visitData.image, uid)
     // await uploadPetPhoto(imageFile.file, `${uid}.${imageFile.ext}`)
     // const publicImageUrls = await getPublicUrl(`${uid}.${imageFile.ext}`)
 
-    console.log('visitData.value = ', visitData.value)
+    console.log('visitData SB = ', visitData)
     // const { error } = await client
     //     .from("visits")
     //     .upsert({
