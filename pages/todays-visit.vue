@@ -266,52 +266,65 @@ const editPetInfo = () => {
                     @click.prevent="editPetInfo"
                     icon="pi pi-pencil"
                   />
-                  <div class="flex flex-column col-12 sm:col-6 md:col-4">
+                  <div class="flex flex-column col-12 sm:col-4">
                     <p><span>Type:</span> {{ selectedPet.type.label }}</p>
                     <p><span>Sex:</span> {{ selectedPet.sex }}</p>
                     <p><span>Spayed/Neutered:</span> {{ selectedPet.spayed_neutered }}</p>
                     <p><span>DOB:</span> {{ formatDate(selectedPet.dob) }}</p>
-                    <p><span>Tracking:</span> {{ selectedPet.tracking.join(", ") }}</p>
+                    <p>
+                      <span>Tracking:</span>
+                      <ul v-if="selectedPet.tracking" class="my-0">
+                        <li v-for="item in selectedPet.tracking">
+                          {{ item }}
+                        </li>                      
+                      </ul>
+                      <div v-else class="inline">&nbsp;none</div>
+                    </p>
                   </div>
-                  <div class="col-12 sm:col-6 md:col-4">
-                    <p><span>Lifestyle:</span> {{ selectedPet.lifestyles.join(", ") }}</p>
+                  <div class="col-12 sm:col-4">
+                    <p>
+                      <span>Lifestyle:</span>
+                      <ul v-if="selectedPet.lifestyles" class="my-0">
+                        <li v-for="item in selectedPet.lifestyles">
+                          {{ item }}
+                        </li>                      
+                      </ul>
+                      <div v-else class="inline">&nbsp;none</div>
+                    </p>
                     <p v-if="isExotic">
                       <span>Aquired:</span> {{ selectedPet.pet_aquired_from }}
                     </p>
                     <p v-if="isExotic">
-                      <span>Housing/Enclosure:</span> {{ selectedPet.describe_housing }}
+                      <span>Housing/Enclosure: </span> {{ selectedPet.describe_housing }}
                     </p>
                     <p>
                       <span>Foods/Snacks:</span>
-                      {{
-                        selectedPet.food
-                          .map((item) => {
-                            return `${item.product}: ${item.times_a_day}x/day`
-                          })
-                          .join(", ")
-                      }}
+                      <ul v-if="selectedPet.food" class="my-0">
+                        <li v-for="item in selectedPet.food">
+                          {{ item.product }}: {{ item.times_a_day }}x/day
+                        </li>                      
+                      </ul>
+                      <div v-else class="inline">&nbsp;none</div>
                     </p>
                   </div>
-                  <div class="col-12 sm:col-6 md:col-4">
+                  <div class="col-12 sm:col-4">
                     <p>
                       <span>Preventatives:</span>
-                      {{
-                        selectedPet.preventatives
-                          .map((item) => {
-                            return `${item.product}`
-                          })
-                          .join(", ")
-                      }}
+                       <ul v-if="selectedPet.preventatives" class="my-0">
+                        <li v-for="item in selectedPet.preventatives">
+                          {{ item.product }}
+                        </li>                      
+                      </ul>
+                      <div v-else class="inline">&nbsp;none</div>
                     </p>
                     <p>
-                      <span>Rx:</span>
-                      {{
-                        selectedPet.meds
-                          .map((item) => {
-                            return `${item.product}: ${item.dose} ${item.times_a_day}x/day`
-                          })
-                          .join(", ")
-                      }}
+                      <span>Medications and/or supplements:</span>
+                      <ul v-if="selectedPet.meds.length" class="my-0">
+                        <li v-for="item in selectedPet.meds">
+                          {{ item.product }}: {{ item.dose }} {{ item.times_a_day }}x/day
+                        </li>                      
+                      </ul>
+                      <div v-else class="inline">&nbsp;none</div>
                     </p>
                     <p>
                       <span>Insurance:</span>

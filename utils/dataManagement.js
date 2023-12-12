@@ -153,7 +153,7 @@ export const saveVisitFormData = async (formData, selectedPet) => {
         formData = VISIT_OBJECT_MODEL
 
         // what to do now?
-        //navigateTo("/thank-you")
+        navigateTo("/thank-you")
     }
 
 }
