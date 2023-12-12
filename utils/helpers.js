@@ -194,3 +194,12 @@ export const formatPhoneNumber = (phoneNumberString) => {
 
     return formatted
 }
+
+export const formatDate = (date) => {
+    //console.log('date = ', date)
+    return new Date(date).toLocaleDateString("en-us", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+    })
+}

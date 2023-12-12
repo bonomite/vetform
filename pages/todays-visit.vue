@@ -20,6 +20,7 @@ const currentUser = useCurrentUser()
 const currentUserProfile = useCurrentUserProfile()
 const toast = useToast()
 const selectedPet = useSelectedPet()
+const isExotic = ref(selectedPet.value?.type?.exotic)
 
 const rules = computed(() => {
   return {
@@ -38,18 +39,16 @@ const rules = computed(() => {
   }
 })
 
-const initPreventatives = () => {
-  const newPreventatives = []
-  selectedPet.value.preventatives.forEach((pre) => {
-    pre.date = null
-    newPreventatives.push(pre)
-  })
-  return newPreventatives
-}
+// const initPreventatives = () => {
+//   const newPreventatives = []
+//   selectedPet.value.preventatives.forEach((pre) => {
+//     pre.date = null
+//     newPreventatives.push(pre)
+//   })
+//   return newPreventatives
+// }
 
-watch(selectedPet, () => {
-  //formData.preventatives = initPreventatives()
-})
+watch(selectedPet, () => {})
 
 const formData = reactive({
   goals_concerns: null,
@@ -65,6 +64,16 @@ watch(formData, () => {
   localStorage.setItem(VISIT_LOCAL_STORAGE_NAME, JSON.stringify(formData))
 })
 
+const formatDates = (arr) => {
+  const newArr = []
+  arr.forEach((item) => {
+    if (item) {
+      newArr.push(new Date(item))
+    }
+  })
+  return newArr
+}
+
 onMounted(() => {
   const localFormData = getAndSetCurrentVisit()
 
@@ -74,18 +83,12 @@ onMounted(() => {
     formData.refills = localFormData.refills ?? null
     formData.skin_lesions = localFormData.skin_lesions ?? null
     formData.skin_lesions_coordinates = localFormData.skin_lesions_coordinates ?? null
-    formData.images = localFormData.images ?? []
-    formData.preventatives = localFormData.preventatives ?? []
+    formData.images = []
+    formData.preventatives = formatDates(localFormData.preventatives) ?? []
   }
 
   isReady.value = true
 })
-
-const imageRemove = (e) => {
-  console.log("formData.images = ", formData.images)
-  console.log("e = ", e)
-  //formData.images[e.index] = null
-}
 
 const v$ = useVuelidate(rules, formData)
 
@@ -98,26 +101,19 @@ const submit = async () => {
   }
 }
 
-async function convertBlobToBase64(event) {
-  console.log("event.files =  ", event.files)
-
-  event.files.map(async (file, i) => {
-    const url = file.objectURL
-    const blob = await fetch(url).then((r) => r.blob())
-
-    const reader = new FileReader()
-    reader.onloadend = () => {
-      const dataURL = reader.result
-      formData.images[i] = dataURL
-    }
-    reader.readAsDataURL(blob)
+const editPetInfo = () => {
+  navigateTo({
+    path: "/pet-profile",
+    query: {
+      edit: "true",
+    },
   })
 }
 
 //console.log("selectedPet", selectedPet)
 </script>
 <template>
-  <section v-if="isReady" class="todays-visit">
+  <section v-if="isReady && selectedPet" class="todays-visit">
     <div class="header flex align-items-center justify-content-between gap-2">
       <div class="flex align-items-center gap-2">
         <div class="pet-image flex-none">
@@ -225,8 +221,8 @@ async function convertBlobToBase64(event) {
             :class="{
               limit: formData.images.length > 2,
             }"
+            :previewWidth="100"
             @select="(e) => (formData.images = e.files)"
-            @remove="(e) => imageRemove(e)"
           ></FileUpload>
         </div>
 
@@ -252,6 +248,97 @@ async function convertBlobToBase64(event) {
           </div>
         </div>
 
+        <!-- review pet info -->
+        <div class="col-12">
+          <div class="question-text mb-2" for="image">
+            For the last step, please review & update any of {{ selectedPet.name }}'s
+            information that may have changed.
+          </div>
+          <div class="petFile">
+            <Accordion>
+              <AccordionTab>
+                <template #header>
+                  <div
+                    class="flex align-items-center gap-2 justify-content-between w-full"
+                  >
+                    <div class="flex align-items-center gap-2">
+                      <div class="pet-image flex-none">
+                        <img :src="selectedPet?.image" />
+                      </div>
+                      <h4 class="m-0">{{ selectedPet?.name }}</h4>
+                    </div>
+                  </div>
+                </template>
+                <div class="grid">
+                  <Button
+                    class="editBtn"
+                    @click.prevent="editPetInfo"
+                    icon="pi pi-pencil"
+                  />
+                  <div class="flex flex-column col-12 sm:col-6 md:col-4">
+                    <p><span>Type:</span> {{ selectedPet.type.label }}</p>
+                    <p><span>Sex:</span> {{ selectedPet.sex }}</p>
+                    <p><span>Spayed/Neutered:</span> {{ selectedPet.spayed_neutered }}</p>
+                    <p><span>DOB:</span> {{ formatDate(selectedPet.dob) }}</p>
+                    <p><span>Tracking:</span> {{ selectedPet.tracking.join(", ") }}</p>
+                  </div>
+                  <div class="col-12 sm:col-6 md:col-4">
+                    <p><span>Lifestyle:</span> {{ selectedPet.lifestyles.join(", ") }}</p>
+                    <p v-if="isExotic">
+                      <span>Aquired:</span> {{ selectedPet.pet_aquired_from }}
+                    </p>
+                    <p v-if="isExotic">
+                      <span>Housing/Enclosure:</span> {{ selectedPet.describe_housing }}
+                    </p>
+                    <p>
+                      <span>Foods/Snacks:</span>
+                      {{
+                        selectedPet.food
+                          .map((item) => {
+                            return `${item.product}: ${item.times_a_day}x/day`
+                          })
+                          .join(", ")
+                      }}
+                    </p>
+                  </div>
+                  <div class="col-12 sm:col-6 md:col-4">
+                    <p>
+                      <span>Preventatives:</span>
+                      {{
+                        selectedPet.preventatives
+                          .map((item) => {
+                            return `${item.product}`
+                          })
+                          .join(", ")
+                      }}
+                    </p>
+                    <p>
+                      <span>Rx:</span>
+                      {{
+                        selectedPet.meds
+                          .map((item) => {
+                            return `${item.product}: ${item.dose} ${item.times_a_day}x/day`
+                          })
+                          .join(", ")
+                      }}
+                    </p>
+                    <p>
+                      <span>Insurance:</span>
+                      {{ selectedPet.has_insurance ? selectedPet.provider : "none" }}
+                    </p>
+                  </div>
+
+                  <Button
+                    label="Edit Pet Info"
+                    @click.prevent="editPetInfo"
+                    icon="pi pi-pencil"
+                  />
+                </div>
+              </AccordionTab>
+            </Accordion>
+          </div>
+        </div>
+
         <Button type="submit" label="Submit" />
       </div>
     </form>
@@ -267,16 +354,32 @@ async function convertBlobToBase64(event) {
     border: 1px solid var(--stroke);
     border-radius: 0.5rem;
     padding: 0.25rem 1rem;
-    .pet-image {
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      overflow: hidden;
-      img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
+  }
+  .pet-image {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    overflow: hidden;
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+  .petFile {
+    position: relative;
+    p {
+      margin: 0;
+      font-weight: bold;
+      span {
+        font-weight: normal;
       }
+    }
+    .editBtn {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      z-index: 1;
     }
   }
 }
