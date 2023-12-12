@@ -15,7 +15,7 @@ export default defineNuxtConfig({
 			ripple: true,
 		},
 		components: {
-			include: ['Button', 'Calendar', 'Checkbox', 'Dropdown', 'FileUpload', 'InputText', 'InputMask', 'InputNumber', 'RadioButton', 'SelectButton', 'Steps', 'Textarea', 'Toast']
+			include: ['Button', 'Calendar', 'Checkbox', 'Dropdown', 'FileUpload', 'InputText', 'InputMask', 'InputNumber', 'RadioButton', 'SelectButton', 'Steps', 'Textarea', 'Toast', 'Accordion', 'AccordionTab']
 		},
 		directives: {
 			include: ['Ripple']

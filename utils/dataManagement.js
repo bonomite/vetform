@@ -1,12 +1,7 @@
 import { reactive } from 'vue'
-import { usePetProfileData } from '~/composables/states.ts'
-import { LOCAL_STORAGE_NAME } from '~/utils/globals.ts'
-import { useCurrentUser, useCurrentUserProfile } from '~/composables/states.ts'
+import { useCurrentUser, useCurrentUserProfile, usePetProfileData, useVisitData } from '~/composables/states.ts'
+import { PET_LOCAL_STORAGE_NAME, VISIT_LOCAL_STORAGE_NAME, PET_OBJECT_MODEL, VISIT_OBJECT_MODEL } from '~/utils/globals.ts'
 import { ynToBoolean, randomUID } from '~/utils/helpers.js'
-
-
-
-
 
 export const savePetFormData = async (formData, submit = false) => {
     const petProfileData = reactive(usePetProfileData())
@@ -16,7 +11,7 @@ export const savePetFormData = async (formData, submit = false) => {
 
     if (!submit) {
         localStorage.setItem(
-            LOCAL_STORAGE_NAME,
+            PET_LOCAL_STORAGE_NAME,
             JSON.stringify(petProfileData.value)
         )
     } else {
@@ -82,7 +77,7 @@ export const savePetFormData = async (formData, submit = false) => {
             }
 
             //clear local storage if supabase update is successful
-            localStorage.removeItem(LOCAL_STORAGE_NAME)
+            localStorage.removeItem(PET_LOCAL_STORAGE_NAME)
 
             // clear petProfileData state if supabase update is successful
             petProfileData.value = PET_OBJECT_MODEL
@@ -91,4 +86,74 @@ export const savePetFormData = async (formData, submit = false) => {
             navigateTo("/dashboard")
         }
     }
+}
+
+const initPreventatives = (visitData, selectedPet) => {
+    const newPreventatives = []
+    selectedPet.preventatives.forEach((pre, index) => {
+        pre.date = String(visitData.preventatives[index])
+        newPreventatives.push(pre)
+    })
+    return newPreventatives
+}
+
+export const saveVisitFormData = async (formData, selectedPet) => {
+    //create non-reactive instance of formData
+    const visitData = { ...formData }
+
+    // format preventatives
+    visitData.preventatives = initPreventatives(visitData, selectedPet)
+
+    //update the pet profile with the new preventative data
+
+    // submit form to supabase 
+    const client = useSupabaseClient()
+    const currentUser = useCurrentUser()
+
+    const uid = randomUID()
+
+    //image
+    // Use Supabase storage api to upload and get back a URL we can store in the table
+    const publicImageUrlsArr = await Promise.all(visitData.images.map(async (image, index) => {
+        const imageName = `${uid}-${index}-${image.name}`
+        await uploadPetPhoto(image, imageName)
+        const publicImageUrl = await getPublicUrl(imageName)
+        console.log('IN publicImageUrl = ', publicImageUrl)
+        return publicImageUrl
+    }))
+    console.log('OUT publicImageUrlsArr = ', publicImageUrlsArr)
+    visitData.images = publicImageUrlsArr
+    console.log('visitData SB = ', visitData)
+
+    // save visit data to supabase
+    const { error } = await client
+        .from("visits")
+        .upsert({
+            visit_id: uid,
+            pet_id: selectedPet.uid,
+            owner_id: currentUser.value.id,
+            goals_concerns: visitData.goals_concerns,
+            refills: ynToBoolean(visitData.refills),
+            skin_lesions: ynToBoolean(visitData.skin_lesions),
+            skin_lesions_coordinates: visitData.skin_lesions_coordinates,
+            images: visitData.images,
+            preventatives: visitData.preventatives,
+            updated_at: new Date().toISOString(),
+        })
+    //   If Supabase errors
+    if (error) {
+        console.log('error = ', error)
+        //   If Supabase is successful
+    } else {
+
+        //clear local storage if supabase update is successful
+        localStorage.removeItem(VISIT_LOCAL_STORAGE_NAME)
+
+        // clear formData state if supabase update is successful
+        formData = VISIT_OBJECT_MODEL
+
+        // what to do now?
+        navigateTo("/thank-you")
+    }
+
 }

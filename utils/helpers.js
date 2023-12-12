@@ -46,10 +46,16 @@ export const getAndSetUserProfile = async () => {
 }
 
 export const getAndSetCurrentPetProfile = () => {
-    const ls = JSON.parse(localStorage.getItem(LOCAL_STORAGE_NAME))
+    const ls = JSON.parse(localStorage.getItem(PET_LOCAL_STORAGE_NAME))
     const petProfileData = usePetProfileData()
     petProfileData.value = ls
     return petProfileData.value
+}
+export const getAndSetCurrentVisit = () => {
+    const ls = JSON.parse(localStorage.getItem(VISIT_LOCAL_STORAGE_NAME))
+    const visitData = useVisitData()
+    visitData.value = ls
+    return visitData.value
 }
 
 export const getName = computed(() => {
@@ -174,7 +180,7 @@ export const handleImage = async (url, options, bucket = "petphotos") => {
 }
 
 export const formatPhoneNumber = (phoneNumberString) => {
-    console.log('phoneNumberString= ', phoneNumberString)
+    //console.log('phoneNumberString= ', phoneNumberString)
 
     // Remove "1" from the beginning if it exists
     if (phoneNumberString.charAt(0) === '1') {
@@ -187,4 +193,13 @@ export const formatPhoneNumber = (phoneNumberString) => {
     let formatted = cleaned.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3')
 
     return formatted
+}
+
+export const formatDate = (date) => {
+    //console.log('date = ', date)
+    return new Date(date).toLocaleDateString("en-us", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+    })
 }

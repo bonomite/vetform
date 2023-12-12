@@ -1,12 +1,14 @@
 <script setup>
 import { useVuelidate } from "@vuelidate/core"
 import { useToast } from "primevue/usetoast"
-import { useCurrentUser, useCurrentUserProfile } from "~/composables/states.ts"
+import { useCurrentUser, useCurrentUserProfile } from "~/composables/states"
 
 definePageMeta({
   middleware: "get-profile",
 })
 
+const route = useRoute()
+const isEditing = route.query.edit === "true"
 const currentUser = useCurrentUser()
 const currentUserProfile = useCurrentUserProfile()
 const toast = useToast()
@@ -19,7 +21,7 @@ const rules = computed(() => {
     email: validateEmail(),
   }
 })
-
+//console.log("currentUser = ", currentUser)
 const formData = reactive({
   first_name: currentUserProfile.value?.first_name ?? "",
   last_name: currentUserProfile.value?.last_name ?? "",
@@ -33,8 +35,9 @@ async function submit() {
   if (!v$.value.$error) {
     // No validation error, save to Supabase
     currentUser.value = await client.auth.getSession()
+    const currentPhone = formatPhoneNumber(currentUser.value.data.session.user.phone)
     //console.log(currentUser.value)
-    const { error } = await client
+    const sb1 = await client
       .from("profiles")
       .update({
         first_name: formData.first_name,
@@ -43,12 +46,17 @@ async function submit() {
         updated_at: new Date().toISOString(),
       })
       .eq("id", currentUser.value.data.session.user.id)
+
     //   If Supabase errors
-    if (error) {
+    if (sb1?.error) {
       toast.add(toastMessage("database_error"))
     } else {
       toast.add(toastMessage("profile_saved"))
-      navigateTo("/pet-profile")
+      if (isEditing) {
+        navigateTo("/dashboard")
+      } else {
+        navigateTo("/pet-profile")
+      }
     }
   } else {
     scrollToFirstValidationError()
@@ -67,6 +75,13 @@ watch(
 </script>
 <template>
   <section>
+    <Button
+      v-if="isEditing"
+      class="flex-none"
+      icon="pi pi-chevron-left"
+      rounded
+      @click="navigateTo('/dashboard')"
+    />
     <h1>Client Profile</h1>
 
     <form novalidate @submit.prevent="submit" class="flex flex-column gap-2">
@@ -98,8 +113,17 @@ watch(
         ></InputText>
         <Error :errArr="v$.email.$errors" />
       </div>
-      <div>
-        <Button type="submit" label="Save Profile" />
+      <div v-if="isEditing" class="flex align-items-center gap-2 mt-2">
+        <label for="email">Phone</label>
+        <Button
+          plain
+          label="Change phone number"
+          size="small"
+          @click="navigateTo('/change-phone')"
+        />
+      </div>
+      <div class="mt-6">
+        <Button type="submit" :label="isEditing ? 'Update Profile' : 'Save Profile'" />
       </div>
     </form>
   </section>

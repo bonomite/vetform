@@ -1,7 +1,7 @@
 <script setup>
 import { useVuelidate } from "@vuelidate/core"
 import { helpers, required } from "@vuelidate/validators"
-import { useCurrentPetProfileStep } from "~/composables/states.ts"
+import { useCurrentPetProfileStep } from "~/composables/states"
 
 definePageMeta({
   layout: "pet",

@@ -1,5 +1,5 @@
 <script setup>
-import { useCurrentPetProfileStep, usePetProfileData } from "~/composables/states.ts"
+import { useCurrentPetProfileStep, usePetProfileData } from "~/composables/states"
 import { useVuelidate } from "@vuelidate/core"
 import { email, helpers, minLength, required } from "@vuelidate/validators"
 

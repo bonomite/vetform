@@ -5,16 +5,16 @@ export function validatePhone() {
 	return {
 		required: helpers.withMessage(
 			"The phone number field is required",
-		  required
+			required
 		),
 		phoneNumberRegEx,
-	  }
+	}
 }
 export function validateEmail() {
 	return {
 		email: helpers.withMessage('Invalid email format', email),
 		required: helpers.withMessage('The email field is required', required),
-	  }
+	}
 }
 export function validateRequired(message) {
 	return {
