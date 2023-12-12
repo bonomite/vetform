@@ -137,14 +137,15 @@ export const PET_OBJECT_MODEL = {
 }
 
 export const VISIT_OBJECT_MODEL = {
+    visit_id: null,
     pet_id: null,
     owner_id: null,
     goals_concerns: null,
     refills: null,
     skin_lesions: null,
-    skin_lesions_coordinates: null,
-    images: null,
-    preventatives: null,
+    skin_lesions_coordinates: [],
+    images: [],
+    preventatives: [],
 
 }
 

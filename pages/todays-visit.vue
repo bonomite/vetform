@@ -45,7 +45,7 @@ const formData = reactive({
   goals_concerns: null,
   refills: null,
   skin_lesions: null,
-  skin_lesions_coordinates: null,
+  skin_lesions_coordinates: [],
   images: [],
   preventatives: [],
 })

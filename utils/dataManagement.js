@@ -94,18 +94,17 @@ const initPreventatives = (visitData, selectedPet) => {
         pre.date = String(visitData.preventatives[index])
         newPreventatives.push(pre)
     })
-    console.log('newPreventatives= ', newPreventatives)
     return newPreventatives
-    //return visitData.preventatives
 }
 
 export const saveVisitFormData = async (formData, selectedPet) => {
-    //update global state for pet profile
-    const getFormData = computed(() => formData)
-    const visitData = getFormData.value
-    console.log('visitData INIT = ', visitData)
+    //create non-reactive instance of formData
+    const visitData = { ...formData }
+
     // format preventatives
     visitData.preventatives = initPreventatives(visitData, selectedPet)
+
+    //update the pet profile with the new preventative data
 
     // submit form to supabase 
     const client = useSupabaseClient()
@@ -114,38 +113,47 @@ export const saveVisitFormData = async (formData, selectedPet) => {
     const uid = randomUID()
 
     //image
-    // convert the base64 image to a file and use Supabase storage api to upload and get back a URL we can store in the table
-    // const imageFile = base64ToFile(visitData.image, uid)
-    // await uploadPetPhoto(imageFile.file, `${uid}.${imageFile.ext}`)
-    // const publicImageUrls = await getPublicUrl(`${uid}.${imageFile.ext}`)
-
+    // Use Supabase storage api to upload and get back a URL we can store in the table
+    const publicImageUrlsArr = await Promise.all(visitData.images.map(async (image, index) => {
+        const imageName = `${uid}-${index}-${image.name}`
+        await uploadPetPhoto(image, imageName)
+        const publicImageUrl = await getPublicUrl(imageName)
+        console.log('IN publicImageUrl = ', publicImageUrl)
+        return publicImageUrl
+    }))
+    console.log('OUT publicImageUrlsArr = ', publicImageUrlsArr)
+    visitData.images = publicImageUrlsArr
     console.log('visitData SB = ', visitData)
-    // const { error } = await client
-    //     .from("visits")
-    //     .upsert({
-    //         pet_id: uid,
-    //         owner_id: currentUser.value.id,
-    //         refills: ynToBoolean(visitData.value.refills),
-    //         skin_lesions: ynToBoolean(visitData.value.skin_lesions),
-    //         skin_lesions_coordinates: visitData.value.skin_lesions_coordinates,
-    //         images: publicImageUrls,
-    //         preventatives: visitData.value.preventatives.filter(item => item.checked),
-    //         updated_at: new Date().toISOString(),
-    //     })
-    // //   If Supabase errors
-    // if (error) {
-    //     console.log('error = ', error)
-    //     //   If Supabase is successful
-    // } else {
 
-    //     //clear local storage if supabase update is successful
-    //     localStorage.removeItem(VISIT_LOCAL_STORAGE_NAME)
+    // save visit data to supabase
+    const { error } = await client
+        .from("visits")
+        .upsert({
+            visit_id: uid,
+            pet_id: selectedPet.uid,
+            owner_id: currentUser.value.id,
+            goals_concerns: visitData.goals_concerns,
+            refills: ynToBoolean(visitData.refills),
+            skin_lesions: ynToBoolean(visitData.skin_lesions),
+            skin_lesions_coordinates: visitData.skin_lesions_coordinates,
+            images: visitData.images,
+            preventatives: visitData.preventatives,
+            updated_at: new Date().toISOString(),
+        })
+    //   If Supabase errors
+    if (error) {
+        console.log('error = ', error)
+        //   If Supabase is successful
+    } else {
 
-    //     // clear visitData state if supabase update is successful
-    //     visitData.value = VISIT_OBJECT_MODEL
+        //clear local storage if supabase update is successful
+        localStorage.removeItem(VISIT_LOCAL_STORAGE_NAME)
 
-    //     // what to do now?
+        // clear formData state if supabase update is successful
+        formData = VISIT_OBJECT_MODEL
 
-    // }
+        // what to do now?
+        //navigateTo("/thank-you")
+    }
 
 }
